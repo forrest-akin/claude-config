@@ -1,6 +1,9 @@
 # claude-config
 
-Personal Claude Code configuration: skills and, once present, standing instructions.
+Personal Claude Code configuration: standing instructions and skills.
+
+`CLAUDE.md` holds the standing instructions. Linked to `~/.claude/CLAUDE.md`, it loads in every
+session.
 
 ## Install
 
@@ -8,7 +11,7 @@ Personal Claude Code configuration: skills and, once present, standing instructi
 ./install.sh
 ```
 
-Symlinks `CLAUDE.md` (if present) and each `skills/*` directory into `~/.claude`. Re-running is safe.
+Symlinks `CLAUDE.md` and each `skills/*` directory into `~/.claude`. Re-running is safe.
 It refuses to replace an existing `~/.claude/CLAUDE.md` or `~/.claude/skills/<name>` that is not its own link.
 
 ```bash
