@@ -25,3 +25,17 @@ presentations repo with the skills CLI:
 ```bash
 npx skills add slidevjs/slidev
 ```
+
+## Presentations template
+
+`templates/slidev-presentations/` is a starting point for a Slidev presentations repo: a `CLAUDE.md`
+with the writing rule and self-check, plus `.claude/` agents, the `/new-presentation` command and
+a conventions rule. Copy it into a new repo by hand:
+
+```bash
+cp -R templates/slidev-presentations/. /path/to/presentations-repo/
+```
+
+Set `author` to your handle in the frontmatter the command writes. The writing rule draws on the
+`cantrillian-talk-writer` skill and `slide-designer`'s arc on `presentation-narrative`, both linked by
+`install.sh`.
