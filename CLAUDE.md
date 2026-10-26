@@ -171,8 +171,9 @@ in one repo must deploy before one in another, say so.
   back unstaged: snapshot `git status --porcelain` first and re-stage after. Check
   first whether that commit is already pushed. If it's on a feature branch, folding into it
   rewrites published history and needs a force push, so stop and ask me instead. If it's
-  already on the remote's trunk branch (`master`, `main`, etc.), force-pushing trunk isn't an
-  option at all — a follow-up commit is the only way, no need to ask.
+  already on the remote's trunk branch (`master`, `main`, etc.), a follow-up commit is the only
+  way, no need to ask — except in my personal projects (`github.com/forrest-akin/*`), where
+  folding and force-pushing trunk is allowed once I approve it in the current conversation.
 - **Never a follow-up docs commit.** Docs land in the commit that makes them true; otherwise
   that commit ships stale instructions. A later doc-only cleanup is an `--amend` or a rebase
   fixup, not a new commit.
