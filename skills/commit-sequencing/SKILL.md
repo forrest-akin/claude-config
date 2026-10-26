@@ -7,8 +7,9 @@ description: Decides whether a change needs a stack of commits and cuts the boun
 
 ## Stack or not
 
-Always stack a breaking change to an API, schema or event contract (expand, then contract), and a
-refactor that comes with a behavior change. Otherwise stack when at least two hold, else one commit:
+Always stack a breaking change to an API, schema or event contract (expand, then contract); a
+refactor that comes with a behavior change; and a change past about 300 changed lines or with
+more than one behavior. Otherwise stack when at least two hold, else one commit:
 
 - layered change where each layer deploys on its own;
 - a partial delivery that is useful by itself;
@@ -16,7 +17,7 @@ refactor that comes with a behavior change. Otherwise stack when at least two ho
 - risky shared state (shared tables, hot endpoints).
 
 A stack estimated under about 100 lines collapses to one commit, unless that would put an expand
-and its contract, or a refactor and a behavior change, in one commit.
+and its contract, a refactor and a behavior change, or more than one behavior in one commit.
 
 ## Cutting
 
@@ -27,8 +28,11 @@ and its contract, or a refactor and a behavior change, in one commit.
   destructive change that depends on it.
 - A dependency cycle between tasks is reported with both tasks and the artifact each waits on. No
   partial sequence is produced.
-- Red flags: a placeholder message (WIP, temp, part N); code unreachable after its commit; a very
-  large commit.
+- Estimate each commit's changed lines (code, tests and docs) and re-cut any past about 300 at a
+  seam where each part deploys alone; a preparatory refactor usually makes one. When no cut lets
+  each part deploy alone, keep one commit and say why in the plan: deploying alone outranks the size
+  and behavior rules above.
+- Red flags: a placeholder message (WIP, temp, part N); code unreachable after its commit.
 
 ## What forces expand/contract
 
