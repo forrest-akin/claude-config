@@ -9,9 +9,9 @@ description: Designs a multi-agent Workflow script that survives its own failure
 
 - Agents die from transient API errors, so each extra turn is another chance to die. A restarted
   agent starts over from its prompt and pays for its turns again; files it wrote survive.
-- Budget about 30 tool calls per agent or per installment, the call-count proxy for the 50%
-  context target. Measured 2026-09-10: p50/p90/max of 25/36/54 calls ended at 39K/54K/79K tokens
-  of context; research agents died at 75-80 calls.
+- CLAUDE.md "Subagents" sets the call budgets. Measured 2026-10-26 on a 1M window: 42-64 calls
+  peaked at 102-156K tokens of context, with no deaths. Research agents died at 75-80 calls
+  (2026-09-10).
 - An open-ended agent re-sends its whole context every turn, so its cost grows faster than its
   turn count. If everything downstream waits on all upstream results, one runaway stalls the run.
 
