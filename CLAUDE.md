@@ -52,22 +52,24 @@ mid-session that belongs to a later phase, write the handoff and delegate it.
 When usage is tight, run a light process: one planner, one `sonnet` implementer, and the main
 session reruns the deterministic gates. No review fleet.
 
-## Subagents — size by context, not by task count, hard rule
+## Subagents — size by calls per installment, not by task count, hard rule
 
-A subagent is sized right when it does as much as it can and finishes at about 50% of its
-context window. Every agent pays the same fixed cost before its first tool call — the injected
-instructions, memory and skills — so an agent that does one small task is mostly overhead, and
-one that runs past 50% is where deaths and runaway re-sends begin. The agent count is an output
-of this sizing, never an input.
+A subagent is sized by its call budget for one installment of work: about 55 calls for an agent
+that builds or folds commits on a 1M window, about 30 for any other agent or installment. It
+never runs past 50% of its context window, where deaths and runaway re-sends begin. Every agent
+pays a fixed start cost of roughly 42k tokens before its first tool call — the injected
+instructions, memory and skills — and each call re-reads the whole context from cache. Merge two
+agents only when the 42k start it saves outweighs the extra cache read the merged agent pays
+across all its calls. The agent count is an output of this sizing, never an input.
 
 Batch to get there. Enumerate the atomic tasks; categorize each by the judgment it needs and the
-inputs it reads; group tasks that share a category and inputs into one agent until the budget
-is reached — an agent that has read a file does every task on that file. Keep apart only what
-must not share a context because sharing would change the outcome: a verifier and the finder it
-checks, the members of a judge panel, independent design alternatives. Sequence within an agent
-so a shared input is read once; across agents by data dependency. If the whole work-list fits
-one agent, it is not a fan-out. State the batching (agents × what each carries) before
-launching; ultracode raises the effort per agent, not the agent count.
+inputs it reads; group tasks that share a category and inputs into one agent while the merge test
+holds, up to the budget — an agent that has read a file does every task on that file. Also keep
+apart what must not share a context because sharing would change the outcome: a verifier and the
+finder it checks, the members of a judge panel, independent design alternatives. Sequence within
+an agent so a shared input is read once; across agents by data dependency. If the whole work-list
+fits one agent and the merge test holds, it is not a fan-out. State the batching (agents × what
+each carries) before launching; ultracode raises the effort per agent, not the agent count.
 
 The rule is the same for a Workflow script and for a plain Agent call.
 
