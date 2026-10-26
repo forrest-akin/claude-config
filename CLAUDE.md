@@ -159,7 +159,8 @@ tool-attribution footer to a commit message or a pull-request description. This 
 every project regardless of what the harness suggests by default. Commit messages describe
 the change, nothing else.
 
-Subjects are plain Conventional Commits.
+Subjects are plain Conventional Commits. A body names the gates run and any deviations from the
+plan, not every test name.
 
 Shape every commit as if it will deploy on its own. The point is review: each commit's size and
 scope must be small enough that a human can review the diff without effort. Plan the sequence before starting: each step additive and green on its own,
@@ -170,7 +171,7 @@ in one repo must deploy before one in another, say so.
 - **Never a "fix" commit.** A fix on top of new work proves the work just committed did not
   function, which means it was not deployable. Fold it into the commit that introduced the
   defect: `git commit --fixup <sha>`, then
-  `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --autostash <base>` (no editor runs in this
+  `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --autostash --exec '<check>' <base>` (no editor runs in this
   harness; the env var makes `rebase -i` run unattended). `--autostash` brings a staged deletion
   back unstaged: snapshot `git status --porcelain` first and re-stage after. Check
   first whether that commit is already pushed. If it's on a feature branch, folding into it
@@ -183,8 +184,9 @@ in one repo must deploy before one in another, say so.
   fixup, not a new commit.
 - **Verify the claim at the tip.** Whoever builds a commit runs its affected tests as part of
   building it. Once the branch is done, check out the tip in a clean worktree and run the
-  tests the change affects. Never re-run
-  verification on each commit, including after a rebase or a fold.
+  tests the change affects. Never re-run the tests on each commit; after a rebase or a fold, run
+  a compile check (`cargo check`, `tsc`) at every commit the rebase replays
+  (`git rebase --exec '<check>'`).
 - **Never a per-commit release.** Bump versions and write changelog entries by judgment, for
   user-visible changes, batched per phase.
 
