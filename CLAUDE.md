@@ -121,6 +121,10 @@ fail for the right reason. Write enough implementation to pass — without cheat
 keeping tests green. Repeat. Done right the loop makes the next thing obvious, and you only
 realize the design at the end.
 
+**Correctness checks.** Use the strongest assurance whose tests finish in under 5–10 seconds.
+Slower techniques (fuzzing, integration, end-to-end) wait until v1 of every planned capability
+exists, then harden the areas close to production; before that, iteration speed wins.
+
 **Seams.** Start at the entrypoint and name the thing below it. Design seams so the program is
 driven by unit tests over pure functions. Implement the next seam that isn't implemented;
 refactoring may introduce new seams deeper down, which is how the design emerges.
