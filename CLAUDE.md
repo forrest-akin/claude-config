@@ -275,6 +275,12 @@ Put literal absolute paths in each command: no `cd <dir> &&` prefix and no `VAR=
 defeat allow-rule matching and send the call to the auto-mode classifier, a paid model request.
 `git -C <dir> …` has no read-only fast path; it needs an allow rule to skip the classifier.
 
+## Installing tools
+
+Install runtimes and tools that no language package manager covers with mise: project ones in
+the repo's `mise.toml`, machine-wide CLIs in `~/.config/mise/config.toml`. Fall back to
+Homebrew only when mise has no backend for the tool, such as poppler.
+
 ## Reading web sources
 
 WebFetch hands back a smaller model's summary, which can drop or invent details. When exact
