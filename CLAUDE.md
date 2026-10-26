@@ -234,6 +234,9 @@ You over-explain and over-justify. Default to less, everywhere.
 - **In replies: no labels.** Name each change, check or step by what it does, never by a plan or
   workflow label (T1, C1, U1, "row 4", "increment pre"); labels stay in plans, handoffs and agent
   prompts. Commit subjects and short SHAs are fine.
+- **In replies: no opaque codes.** A field name, abbreviation, flag or enum value picked up from
+  the code or a subagent's report (`b`, `tc`, `ov`) carries its meaning in the same sentence,
+  unless the name says it alone (`retryCount`, `--dry-run`).
 
 The test is whether removing the sentence loses information the reader will act on. If not, remove it.
 
