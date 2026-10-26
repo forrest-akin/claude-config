@@ -23,6 +23,8 @@ Run in order; stop at the first that applies.
   finished spike is evidence for the later steps.
 - If the user skips a recommended spike, proceed and record the unverified assumptions.
 - Unsure between two artifacts: write the smaller.
+- A rewrite of an existing system starts with a probe inventory of that system's defects and
+  untrue docs, and the plan cites it.
 
 ## Artifact checks
 
@@ -66,5 +68,9 @@ A stub plan's deliberately empty sections are skipped; everything it does contai
 ## Review discipline
 
 - Evaluate every check, even after one fails.
-- Report each problem in one sentence that names its section. Nothing to report is a valid result.
+- Report each problem in one sentence that names its section. Three or more findings that break
+  one plan-wide rule the same way are reported as one finding naming the rule the plan should
+  state once. Nothing to report is a valid result.
+- After a user revision, re-judge only the sections it touched; that re-judge does not count
+  toward the two passes.
 - Stop after two passes; when nearly everything blocks, rewrite rather than refine.
