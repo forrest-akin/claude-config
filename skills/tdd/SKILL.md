@@ -8,6 +8,10 @@ description: Drives a new behavior or a reproducible bug fix test-first, one fai
 ## Red
 
 - One failing test at a time. Never write tests in a batch ahead of the code.
+- A test that passes on its first run proves nothing yet: break the code it pins, watch it fail
+  for the stated reason, restore.
+- A fake of a host API reproduces the host's failure modes and lifecycle rules the code depends
+  on (an object that throws once replaced, a call that rejects).
 
 ## Green
 
@@ -18,6 +22,8 @@ description: Drives a new behavior or a reproducible bug fix test-first, one fai
   for too much: delete it and write a smaller one.
 - If one example cannot pin the general behavior, pick an example that forces the general case
   rather than writing the literal and waiting for a second test.
+- Before committing, break each new branch once. A break that leaves every test green marks code
+  no test demanded: add the test or delete the code.
 
 ## Two hats
 
