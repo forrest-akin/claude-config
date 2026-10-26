@@ -165,12 +165,14 @@ the worktree that has it.
 ## Sources
 
 Docs read 2026-10-25 against Claude Code 2.1.310:
-[skills](https://code.claude.com/docs/en/skills),
-[sub-agents](https://code.claude.com/docs/en/sub-agents),
-[hooks](https://code.claude.com/docs/en/hooks),
-[memory](https://code.claude.com/docs/en/memory),
-[mcp](https://code.claude.com/docs/en/mcp),
-[plugins-reference](https://code.claude.com/docs/en/plugins-reference),
-[plugin manifest](https://code.claude.com/docs/en/plugins/manifest-reference). Observed on
+[skills](https://code.claude.com/docs/en/skills.md),
+[sub-agents](https://code.claude.com/docs/en/sub-agents.md),
+[hooks](https://code.claude.com/docs/en/hooks.md),
+[memory](https://code.claude.com/docs/en/memory.md),
+[mcp](https://code.claude.com/docs/en/mcp.md),
+[plugins-reference](https://code.claude.com/docs/en/plugins-reference.md),
+[plugin manifest](https://code.claude.com/docs/en/plugins/manifest-reference.md). Observed on
 2.1.310 the same day: the base-directory prefix on a loaded skill, and placeholder substitution
 and command execution inside code fences.
+Cite docs pages by their `.md` URL and read them with `curl -sL <url>.md`, not WebFetch, which
+summarizes.

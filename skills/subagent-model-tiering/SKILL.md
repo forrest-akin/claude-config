@@ -58,13 +58,13 @@ check `/tasks` for what actually ran.
 ## Platform facts
 
 Docs read 2026-10-25 against Claude Code 2.1.310:
-[sub-agents](https://code.claude.com/docs/en/sub-agents#choose-a-model),
-[model-config](https://code.claude.com/docs/en/model-config),
-[cost and intelligence](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence),
+[sub-agents](https://code.claude.com/docs/en/sub-agents.md#choose-a-model),
+[model-config](https://code.claude.com/docs/en/model-config.md),
+[cost and intelligence](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md),
 the per-model prompting pages for
-[Haiku 5.5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-haiku-5-5),
-[Sonnet 5.5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5) and
-[Fable 5.1](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1).
+[Haiku 5.5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-haiku-5-5.md),
+[Sonnet 5.5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5.md) and
+[Fable 5.1](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1.md).
 
 - Model order: the call's `model`, then the agent's frontmatter `model` (`inherit` means the main
   session's), then `CLAUDE_CODE_SUBAGENT_MODEL`, then the dispatcher's model.
