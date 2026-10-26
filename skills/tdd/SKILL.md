@@ -35,7 +35,9 @@ description: Drives a new behavior or a reproducible bug fix test-first, one fai
 ## When there is nothing to pin
 
 - A change with no behavior to pin (config, wiring, formatting, generated code, runner setup):
-  ask before going ahead without a test, and put the no-test rationale in the commit body.
+  first check whether the code can move beneath the entrypoint so only the entrypoint remains,
+  then ask before landing what remains without a test, and put the no-test rationale in the
+  commit body.
 - Characterizing legacy code before changing it is a separate, looser activity: pin what it does
   now, wrong parts included, then drive the change test-first.
 - Whenever test-first is skipped, say so and why.
