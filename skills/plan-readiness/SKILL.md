@@ -48,6 +48,11 @@ The bar: a context-free implementer makes no design choice.
 - A task's acceptance check isn't an observable state (a file exists, a test passes, output
   matches); a quality adjective fails.
 - A stacked commit doesn't deploy on its own (check with commit-sequencing).
+- An entrypoint run by a host (extension, plugin, hook, handler) lacks a citation from the host's
+  own source or docs of how it loads, runs and packages it: runtime, module loading, dependency
+  rules, lifecycle. A probe that loads the host into your runtime proves the reverse.
+- A destructive step (delete, overwrite, reset), including one carried from a spec, isn't checked
+  against what its target holds once the whole plan has landed.
 - The plan drops a constraint the user stated, reframes their goal, or claims something the
   dialogue didn't establish.
 
