@@ -117,10 +117,10 @@ effort: a request that opens with long deliberation stalls the same way on repla
 ## Platform facts
 
 Docs read 2026-10-25 against Claude Code 2.1.310:
-[workflows](https://code.claude.com/docs/en/workflows),
-[env-vars](https://code.claude.com/docs/en/env-vars),
-[errors](https://code.claude.com/docs/en/errors),
-[sub-agents](https://code.claude.com/docs/en/sub-agents).
+[workflows](https://code.claude.com/docs/en/workflows.md),
+[env-vars](https://code.claude.com/docs/en/env-vars.md),
+[errors](https://code.claude.com/docs/en/errors.md),
+[sub-agents](https://code.claude.com/docs/en/sub-agents.md).
 
 - Relaunch returns each completed agent's saved result until the first agent whose prompt
   differs; that agent and every agent started after it run again. A failed agent reruns, and so
