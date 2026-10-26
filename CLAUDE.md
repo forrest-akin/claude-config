@@ -275,6 +275,15 @@ Put literal absolute paths in each command: no `cd <dir> &&` prefix and no `VAR=
 defeat allow-rule matching and send the call to the auto-mode classifier, a paid model request.
 `git -C <dir> …` has no read-only fast path; it needs an allow rule to skip the classifier.
 
+## Reading web sources
+
+WebFetch hands back a smaller model's summary, which can drop or invent details. When exact
+wording matters (citations, figures, API or flag details), read the source text yourself:
+`trafilatura -u <url>` for web pages, `curl -sL <url>.md` for code.claude.com and
+platform.claude.com docs, and `curl -sL <url> -o <file>` then `pdftotext <file> -` for PDFs.
+Quote what you rely on verbatim. For a long source, grep it for the passage or have a subagent
+read it and return quotes.
+
 ## Writing voice
 
 When drafting anything I will send under my own name — Slack messages, especially — match my
