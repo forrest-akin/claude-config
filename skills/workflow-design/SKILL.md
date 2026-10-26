@@ -90,14 +90,23 @@ effort: a request that opens with long deliberation stalls the same way on repla
 ## Executing a plan
 
 - Size an implementer's batch from its files (about three calls each) plus a few calls for each
-  task that writes code; end the batch at the call budget or at a commit boundary.
+  task that writes code and for each commit's skill loads and `doc-drift` search; end the batch
+  at the call budget or at a commit boundary.
+- An implementer prompt tells it to load `doc-drift` before every commit, `error-modeling` when
+  the commit adds a failure path, and `commit-sequencing` when it moves code.
 - An implementer that meets an open trade-off stops and returns the options, its pick first.
 - Every task reports done, failed, or blocked with what it is waiting on, in a form a script can
   parse. A task that reports nothing probably exhausted its context: split it before retrying.
+- Each implementer reports its deviations from the plan and its known defects. Before the next
+  dispatch, the orchestrator reads them and either carries each into the next prompt or records
+  it as a finding.
 - A task too large to finish is divided once into a few independent subtasks. If one of those is
   still too large, ask the user.
 - Before redispatching a failure, diagnose it; the new attempt gets the evidence and where to
   start, never the raw error. Give up after three attempts.
+- A refine agent takes as many target commits as fit its call budget and folds them in one
+  `rebase -i` with an edit stop at each. At each stop it re-checks the commit body's claims
+  (counts, timings) against the rewritten tree.
 - A loop that runs outside the session has a fixed iteration cap, named exit states, a fresh
   context each iteration and all its state in a file. After a crash, unfinished items return to
   the queue without spending a retry. The loop is finished when that file lists nothing
@@ -109,10 +118,11 @@ effort: a request that opens with long deliberation stalls the same way on repla
   estimate, and flags a run past the large-workflow line. An opus agent at xhigh cost about 155K
   tokens (2026-09-10); sonnet or low effort costs a fraction. The user's usage limit is shared
   with their other work.
-- Monitor from launch: poll about once a minute, heartbeat about every five. Alert when an agent
-  passes its call budget, on ~20 minutes with agents running but no new result, and on an agent
-  transcript that ends in a user interrupt. On an alert, read the transcript tail, then stop and
-  relaunch with a tighter prompt, or harvest.
+- Monitor from launch. Poll about once a minute and heartbeat only on a state change: an agent
+  finishes, an agent passes its call budget, ~20 minutes pass with agents running but no new
+  result, or an agent transcript ends in a user interrupt. Count an agent's calls from its
+  transcript, not from the watcher's notifications. On any change but a finish, read the
+  transcript tail, then stop and relaunch with a tighter prompt, or harvest.
 
 ## Platform facts
 
