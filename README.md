@@ -30,6 +30,9 @@ A linked hook runs once registered in `~/.claude/settings.json`:
   "hooks": {
     "PostToolUse": [
       { "matcher": "", "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/call-budget.sh" }] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/bash-prefix.sh" }] }
     ]
   }
 }
@@ -37,9 +40,12 @@ A linked hook runs once registered in `~/.claude/settings.json`:
 
 - `call-budget.sh` tells an agent its tool-call count when it reaches 80% of the budget its first
   prompt names (`About N calls`, `Hard budget: N`) and on every call from 100%.
+- `bash-prefix.sh` denies a Bash command that starts with `NAME=value` or `cd`, quoting
+  `CLAUDE.md` "Bash commands".
 
 ```bash
 bash test/call-budget.test.sh
+bash test/bash-prefix.test.sh
 ```
 
 ## Slidev
