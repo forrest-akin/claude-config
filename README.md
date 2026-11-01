@@ -1,6 +1,6 @@
 # claude-config
 
-Personal Claude Code configuration: standing instructions and skills.
+Personal Claude Code configuration: standing instructions, skills and hooks.
 
 `CLAUDE.md` holds the standing instructions. Linked to `~/.claude/CLAUDE.md`, it loads in every
 session.
@@ -11,14 +11,36 @@ session.
 ./install.sh
 ```
 
-Symlinks `CLAUDE.md` and each `skills/*` directory into `~/.claude`. Re-running is safe.
-It refuses to replace an existing `~/.claude/CLAUDE.md` or `~/.claude/skills/<name>` that is not its own link.
+Symlinks `CLAUDE.md`, each `skills/*` directory and each `hooks/*.sh` into `~/.claude`. Re-running is safe.
+It refuses to replace an existing `~/.claude/CLAUDE.md`, `~/.claude/skills/<name>` or `~/.claude/hooks/<name>.sh`
+that is not its own link.
 
 ```bash
 bash test/install.test.sh
 ```
 
 Runs the installer against a fixture repo and a temporary `HOME`.
+
+## Hooks
+
+A linked hook runs once registered in `~/.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      { "matcher": "", "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/call-budget.sh" }] }
+    ]
+  }
+}
+```
+
+- `call-budget.sh` tells an agent its tool-call count when it reaches 80% of the budget its first
+  prompt names (`About N calls`, `Hard budget: N`) and on every call from 100%.
+
+```bash
+bash test/call-budget.test.sh
+```
 
 ## Slidev
 

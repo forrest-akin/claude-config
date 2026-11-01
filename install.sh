@@ -1,5 +1,6 @@
 #!/bin/bash
-# Symlinks CLAUDE.md and every skills/* into ~/.claude. Replaces nothing it did not create.
+# Symlinks CLAUDE.md, every skills/* and every hooks/*.sh into ~/.claude. Replaces nothing it did not create.
+# Hooks run once registered in ~/.claude/settings.json; README.md shows the entries.
 set -u
 repo="$(cd "$(dirname "$0")" && pwd)"
 dest="$HOME/.claude"
@@ -10,6 +11,10 @@ for dir in "$repo"/skills/*/; do
   [ -d "$dir" ] || continue
   name="$(basename "$dir")"
   pairs+=("$repo/skills/$name|$dest/skills/$name")
+done
+for file in "$repo"/hooks/*.sh; do
+  [ -f "$file" ] || continue
+  pairs+=("$file|$dest/hooks/$(basename "$file")")
 done
 
 bad=0

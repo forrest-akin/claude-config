@@ -10,8 +10,9 @@ check() { if [ "$2" = "$3" ]; then echo "ok   $1"; else echo "FAIL $1: expected 
 fixture() {
   tmp="$(mktemp -d "$root/fixture.XXXXXX")"
   repo="$tmp/repo"; home="$tmp/home"
-  mkdir -p "$repo/skills/alpha" "$repo/skills/beta" "$home"
+  mkdir -p "$repo/skills/alpha" "$repo/skills/beta" "$repo/hooks" "$home"
   echo a > "$repo/skills/alpha/SKILL.md"; echo b > "$repo/skills/beta/SKILL.md"
+  echo g > "$repo/hooks/gamma.sh"
   echo c > "$repo/CLAUDE.md"
   cp "$src" "$repo/install.sh"
 }
@@ -22,6 +23,7 @@ check "first run exits 0" 0 "$(run)"
 check "CLAUDE.md linked" "$repo/CLAUDE.md" "$(readlink "$home/.claude/CLAUDE.md")"
 check "skill alpha linked" "$repo/skills/alpha" "$(readlink "$home/.claude/skills/alpha")"
 check "skill beta linked" "$repo/skills/beta" "$(readlink "$home/.claude/skills/beta")"
+check "hook gamma linked" "$repo/hooks/gamma.sh" "$(readlink "$home/.claude/hooks/gamma.sh")"
 check "second run exits 0" 0 "$(run)"
 check "second run keeps link" "$repo/skills/alpha" "$(readlink "$home/.claude/skills/alpha")"
 
@@ -46,5 +48,10 @@ fixture
 mkdir -p "$home/.claude/skills"; ln -s /elsewhere "$home/.claude/skills/alpha"
 check "foreign symlink exits non-zero" 1 "$(run)"
 check "foreign symlink untouched" /elsewhere "$(readlink "$home/.claude/skills/alpha")"
+
+fixture
+mkdir -p "$home/.claude/hooks"; echo mine > "$home/.claude/hooks/gamma.sh"
+check "existing hook exits non-zero" 1 "$(run)"
+check "existing hook untouched" mine "$(cat "$home/.claude/hooks/gamma.sh")"
 
 [ "$fails" -eq 0 ] && echo "all passed" || { echo "$fails failed"; exit 1; }
