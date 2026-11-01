@@ -118,11 +118,12 @@ effort: a request that opens with long deliberation stalls the same way on repla
   estimate, and flags a run past the large-workflow line. An opus agent at xhigh cost about 155K
   tokens (2026-09-10); sonnet or low effort costs a fraction. The user's usage limit is shared
   with their other work.
-- Monitor from launch. Poll about once a minute and heartbeat only on a state change: an agent
-  finishes, an agent passes its call budget, ~20 minutes pass with agents running but no new
-  result, or an agent transcript ends in a user interrupt. Count an agent's calls from its
-  transcript, not from the watcher's notifications. On any change but a finish, read the
-  transcript tail, then stop and relaunch with a tighter prompt, or harvest.
+- Monitor from launch. Poll about once a minute and heartbeat only when an agent passes its call
+  budget, ~20 minutes pass with agents running but no new result, or an agent transcript ends in
+  a user interrupt. An agent finishing is not a trigger: the Workflow's completion notification
+  returns the results. Count each agent's calls from the `tool_use` blocks in its transcript, not
+  from the watcher's notifications. On any heartbeat, read the transcript tail, then stop and
+  relaunch with a tighter prompt, or harvest.
 
 ## Platform facts
 
@@ -151,6 +152,9 @@ Docs read 2026-10-25 against Claude Code 2.1.310:
   two waits per run. Anywhere else the agent fails.
 - The `Large workflow` warning fires past 25 scheduled agents or 1.5M projected tokens. Up to 16
   agents run concurrently by default; 1,000 agents per run.
+- A run's `journal.jsonl` (`<session>/subagents/workflows/wf_<id>/`) holds only `launched`,
+  `started` and `result` records; no `agent_complete`, `agent_fail` or `workflow_complete` event
+  exists to filter on. Observed 2026-11-01 on 2.1.316 across 50 journals.
 - Workflow agents get no mid-run user input, and subagents have no `AskUserQuestion`. Subagents
   nest at most three layers below the main session by default
   (`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`).
