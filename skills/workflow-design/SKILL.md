@@ -82,7 +82,8 @@ effort: a request that opens with long deliberation stalls the same way on repla
 - Filter findings by severity deterministically before fanning out verifiers. Spend several
   lenses only on findings that block a commit.
 - Refute correctness claims. Settle design claims (readability, altitude) by independent
-  majority vote: a refuter rejects a true design claim by construction.
+  majority vote: a refuter rejects a true design claim by construction. Design reviewers judge
+  by `design-rubric`.
 - Report what the finders concluded, never only a refutation tally.
 - Verify by group (mechanism, commit, subsystem), never one agent per finding. A
   findings-times-lenses shape gets redesigned.
@@ -92,8 +93,9 @@ effort: a request that opens with long deliberation stalls the same way on repla
 - Size an implementer's batch from its files (about three calls each) plus a few calls for each
   task that writes code and for each commit's skill loads and `doc-drift` search; end the batch
   at the call budget or at a commit boundary.
-- An implementer prompt tells it to load `doc-drift` before every commit, `error-modeling` when
-  the commit adds a failure path, and `commit-sequencing` when it moves code.
+- An implementer prompt tells it to load `doc-drift` and `design-rubric` before every commit,
+  `error-modeling` when the commit adds a failure path, and `commit-sequencing` when it moves
+  code.
 - Every implementer prompt and handoff names three stop conditions: two public entry points
   would give different answers for the same inputs; two written rules conflict and no precedence
   settles it; an invariant test would have to be weakened, narrowed, skipped or worked around. In

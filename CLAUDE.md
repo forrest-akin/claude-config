@@ -137,20 +137,7 @@ exists, then harden the areas close to production; before that, iteration speed 
 driven by unit tests over pure functions. Implement the next seam that isn't implemented;
 refactoring may introduce new seams deeper down, which is how the design emerges.
 
-**Design rules:**
-- One responsibility per level of abstraction, and each level keeps its work at its own level.
-  Someone wanting more detail drills down through a seam. This is what keeps functions small.
-- Pure functions over effects. Run effects at the **edges**, confined to as few modules as
-  possible.
-- Composition over inheritance.
-- A cross-cutting concern (metrics, logging, deprecation headers) goes in a decorator that implements
-  the service's interface, wrapped once at the construction site, not in the implementation.
-  It sees only request and result: collapse a distinction rather than add a lookup to preserve it.
-- **Parse, don't validate.** Design data so illegal states cannot be constructed, rather than
-  checking for them later. Two conditions that must not be confused should be two constructors,
-  not one nullable field.
-- Don't build an abstraction before you can prove you need it. Rule of 3. Avoid code in
-  parameter lists — use names of things you have not created yet.
+**Design rules** are checks in the `design-rubric` skill. Load it before each commit and when reviewing a design.
 
 **Tells that it wasn't followed:** tests written after the implementation (they pass on the
 first run, and are shaped to the code rather than the behavior); a method created long before
