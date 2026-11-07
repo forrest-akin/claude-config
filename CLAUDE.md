@@ -25,7 +25,7 @@ past 50%.
 
 The main session edits no source, runs no red-green loop, and performs no review pass. It
 writes exactly one kind of thing itself: the artifact that seeds each phase — a brainstorm,
-plan, or handoff under `.claude/`. That write is the named exception to "no editing in the
+interface draft, plan, or handoff under `.claude/`. That write is the named exception to "no editing in the
 main loop"; everything else is dispatched. Its job is synthesis and orchestration: evaluate
 what the previous phase produced, write that artifact, dispatch the phase to subagents, then
 read back and evaluate what returns. Within a phase, fan out to several subagents to subdivide
@@ -107,7 +107,7 @@ proposals to weigh, not defects to fix.
 An extension (skill, agent, hook, rule) earns its place only by carrying knowledge Claude can't
 derive. Judge it by that, not by past usage.
 
-A decision with no single correct answer (compatibility, latency vs throughput, memory bounds, drop vs crash on overload) is mine: put it to me as options with their trade-offs, recommendation first. When the code, a stated requirement or a convention picks one option, decide and say why.
+A decision with no single correct answer (compatibility, latency vs throughput, memory bounds, drop vs crash on overload) is mine: put it to me as options with their trade-offs, recommendation first. In an interface interview (`interface-design`), bring each question with its evidence and options, and recommend only when I ask. When the code, a stated requirement or a convention picks one option, decide and say why.
 
 Decide from measurement, not theory. A change names the metric that proves it works and its baseline; judge on several metrics and equal workloads, and find the root cause before concluding. When dashboard or log data would inform a decision, ask whether to drive Chrome to read it; otherwise give me the exact query.
 
@@ -260,10 +260,10 @@ Every `.claude/` path falls in exactly one bucket:
 
 1. **Project configuration** — `agents/`, `commands/`, `skills/`, `settings.json`. Tracked like
    source; it lands in the commit that makes it true.
-2. **Seeding artifacts** — `brainstorms/`, `plans/`, `handoffs/`, `qr/`, `stories/`, `noticed.md`.
-   These land with the commit whose work they seeded; a `noticed.md` entry lands with the commit
-   whose author noticed it. Committing the code without the plan that seeded it ships half the
-   change.
+2. **Seeding artifacts** — `brainstorms/`, `plans/`, `handoffs/`, `interfaces/`, `qr/`,
+   `stories/`, `noticed.md`. These land with the commit whose work they seeded; a `noticed.md`
+   entry lands with the commit whose author noticed it. Committing the code without the plan
+   that seeded it ships half the change.
 3. **Process logs** — `.claude/work/`, `todos/`, subagent transcripts, and similar granular
    per-run records. Left untracked.
 
