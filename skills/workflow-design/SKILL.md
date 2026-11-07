@@ -94,8 +94,19 @@ effort: a request that opens with long deliberation stalls the same way on repla
   at the call budget or at a commit boundary.
 - An implementer prompt tells it to load `doc-drift` before every commit, `error-modeling` when
   the commit adds a failure path, and `commit-sequencing` when it moves code.
-- An implementer that meets an open trade-off stops and returns the options, its pick first.
-- Every task reports done, failed, or blocked with what it is waiting on, in a form a script can
+- Every implementer prompt and handoff names three stop conditions: two public entry points
+  would give different answers for the same inputs; two written rules conflict and no precedence
+  settles it; an invariant test would have to be weakened, narrowed, skipped or worked around. In
+  system-level work, a change on the breaking list in `commit-sequencing` ("What forces
+  expand/contract") is the first.
+- An implementer that meets a stop condition or an open trade-off ends its installment. Its report
+  opens with a `Blocked:` block: the condition, the question, the options with its pick first, the
+  proposed diff, and the commits it made before stopping. It commits green work only, nothing for
+  the blocked step.
+- The main session puts a `Blocked:` question to the human with `AskUserQuestion` and resumes the
+  same agent with `SendMessage`. Inside a Workflow a blocked task is terminal; the orchestrator
+  re-dispatches it after the answer.
+- Every task reports done, failed, or blocked with its `Blocked:` block, in a form a script can
   parse. A task that reports nothing probably exhausted its context: split it before retrying.
 - Each implementer reports its deviations from the plan and its known defects. Before the next
   dispatch, the orchestrator reads them and either carries each into the next prompt or records

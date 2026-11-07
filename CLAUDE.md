@@ -34,6 +34,12 @@ the work.
 Scout with about five tool calls, then launch on a good-enough design and adjust between runs.
 If a design question is still open, launch the smaller first run.
 
+Every implementer prompt and handoff names the three stop conditions in `workflow-design`
+"Executing a plan"; an implementer that meets one returns it as `Blocked:`. The main session puts
+the question to me with `AskUserQuestion`, with the options and the implementer's pick labelled as
+the implementer's, and resumes that agent with `SendMessage`; it never answers a design question
+itself.
+
 The commit belongs to the phase that produced the work. The implementing agent stages and
 commits its own output, `.claude/` artifacts included, and reports what it staged. The main
 session commits nothing itself — the artifact it wrote lands with the commit whose work it
