@@ -6,7 +6,7 @@ description: Interviews the human to settle a public interface before it is buil
 # Interface design
 
 The human designs the interface; Claude interviews and records. This is for production code;
-spikes and prototypes supply evidence to the interview.
+spikes (`plan-readiness` "Comparative spike") and prototypes supply evidence to the interview.
 
 ## The interview
 

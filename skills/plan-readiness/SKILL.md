@@ -26,6 +26,23 @@ Run in order; stop at the first that applies.
 - A rewrite of an existing system starts with a probe inventory of that system's defects and
   untrue docs, and the plan cites it.
 
+## Comparative spike
+
+- A step-1 spike builds each approach when plausible approaches differ in something only running code
+  reveals: caller awkwardness, dependency behaviour, performance, boundary leaks. A known
+  trade-off with no empirical question is a decision record instead.
+- One thin vertical slice and one shared acceptance test, written before any arm starts. One
+  agent per approach, each in its own worktree, with prompts identical except for the approach;
+  arms never share a context. The human names the arms, or Claude asks which candidates to build.
+- Arms are built red-green so their testability can be measured. The winning arm may be kept.
+- The judge table has a column for each of: `design-rubric` findings; the three interface
+  numbers; diff size for the slice; setup lines per behaviour; fakes and stubs, and whether any
+  is a mock; whether core tests run with no I/O, clock or environment; whether the acceptance
+  test could be written against the signatures before any body; tests changed when the slice
+  gains one behaviour; suite time against the 5–10 s bar.
+- No single column decides. The table goes to the human as evidence in the `interface-design`
+  interview.
+
 ## Artifact checks
 
 - **Spike**: single-concern questions, each task mapped to a question, a definition of done, a time

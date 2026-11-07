@@ -96,6 +96,8 @@ effort: a request that opens with long deliberation stalls the same way on repla
 - An implementer prompt tells it to load `doc-drift` and `design-rubric` before every commit,
   `error-modeling` when the commit adds a failure path, and `commit-sequencing` when it moves
   code.
+- An implementer prompt also says: when two shapes fit the next test, drive both to green and keep
+  the one whose test was easier to write.
 - Every implementer prompt and handoff names three stop conditions: two public entry points
   would give different answers for the same inputs; two written rules conflict and no precedence
   settles it; an invariant test would have to be weakened, narrowed, skipped or worked around. In
