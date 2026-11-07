@@ -40,6 +40,28 @@ spikes and prototypes supply evidence to the interview.
   and an agreement test that generates its cases. Read it before writing a repo's first invariant
   test.
 
+## Default shape
+
+New interfaces are single-method by default.
+
+- Types are nominal (`trait`, `fun interface`, a branded TypeScript type); a bare function type is
+  never a capability.
+- The implementer-facing interface has one method. Caller convenience lives in derived
+  combinators built on it, as Iterator and Enumerable do.
+- Operations with an invariant across them (begin/commit/rollback, put/get) are bundled as the
+  dependencies of another single-method interface's implementation: a capability. The invariant
+  lives and is tested there. The bundled primitives are not exported beyond the capability's
+  module, and capabilities sit near the application's edge.
+- Inputs and outputs are per-operation sum types (`GetUserRequest`, `GetUserResponse`), never one
+  sum shared by operations whose invariants differ. Implementations switch exhaustively.
+- Variants that share no downstream path are separate interfaces, not one method over a sum,
+  which is a mode flag in disguise.
+- Sums are closed inside a process and versioned or open at a system boundary
+  (`commit-sequencing` "What forces expand/contract", Warn: new enum values).
+- The composition root carries coherence and has its own tests. An area's interfaces are grouped
+  in one module named by a verb phrase.
+- Rust and TypeScript express all of this; Java needs version 21 for exhaustive sealed switches.
+
 ## The draft
 
 The main session writes `.claude/interfaces/<area>.md` with these sections, in order:

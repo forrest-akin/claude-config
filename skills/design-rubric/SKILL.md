@@ -12,7 +12,8 @@ Run before each commit of production code over the files it touches, and in ever
 - No touched file gains or worsens a smell from "Health factors".
 - The three interface numbers never worsen past what the plan's task states: public names,
   parameters per public function, and disagreements between entry points (inputs on which two
-  public functions give different answers). Disagreements outrank the other two: an entry point
+  public functions give different answers), counted by the area's agreement test under
+  `tests/invariants/`. Disagreements outrank the other two: an entry point
   that needs more inputs gets one typed input rather than disagree.
 - Files that keep changing together across commits mark a leaky boundary: report the pair.
 - An accepted smell carries a comment directly above it naming the smell, the rationale and the date.
@@ -28,7 +29,8 @@ Run before each commit of production code over the files it touches, and in ever
   Replace Subclass with Delegate; Replace Superclass with Delegate.
 - **Single-method interfaces.** Tell: an interface whose implementers each write several methods.
   Question: which one method do implementers need, and which are conveniences for callers? Move:
-  Extract Interface down to that method; rebuild the conveniences as functions over it.
+  Extract Interface down to that method; rebuild the conveniences as functions over it. Full
+  rules: `interface-design` "Default shape".
 - **No nulls.** Tell: a nullable field, parameter or return. Question: what does absence mean,
   and must every caller handle it? Move: Introduce Special Case, or two constructors.
 - **No void or empty returns.** Tell: a function returns nothing or an empty value and acts
