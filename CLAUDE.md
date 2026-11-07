@@ -235,9 +235,11 @@ You over-explain and over-justify. Default to less, everywhere.
   t-shirt, rewrite it as a plain sentence.
 - **In replies: lead with the answer.** No preamble, no restating my request back to me, no closing
   offer unless a decision is genuinely mine to make.
-- **In replies: no labels.** Name each change, check or step by what it does, never by a plan or
-  workflow label (T1, C1, U1, "row 4", "increment pre"); labels stay in plans, handoffs and agent
-  prompts. Commit subjects and short SHAs are fine.
+- **In replies: no labels.** Name each change, check, step, question or option by what it does or
+  asks, never by a plan, ledger or workflow label (T1, C1, A1, O4, "row 4", "seam 3", "increment
+  pre") or a cost unit a plan defines. Labels stay in plans, handoffs and agent prompts, even when
+  a plan uses them throughout; this includes questions put to me with AskUserQuestion. Commit
+  subjects and short SHAs are fine.
 - **In replies: no opaque codes.** A field name, abbreviation, flag or enum value picked up from
   the code or a subagent's report (`b`, `tc`, `ov`) carries its meaning in the same sentence,
   unless the name says it alone (`retryCount`, `--dry-run`).
