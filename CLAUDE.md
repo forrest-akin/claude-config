@@ -260,9 +260,10 @@ Every `.claude/` path falls in exactly one bucket:
 
 1. **Project configuration** — `agents/`, `commands/`, `skills/`, `settings.json`. Tracked like
    source; it lands in the commit that makes it true.
-2. **Seeding artifacts** — `brainstorms/`, `plans/`, `handoffs/`, `qr/`, `stories/`. These land
-   with the commit whose work they seeded. Committing the code without the plan that seeded it
-   ships half the change.
+2. **Seeding artifacts** — `brainstorms/`, `plans/`, `handoffs/`, `qr/`, `stories/`, `noticed.md`.
+   These land with the commit whose work they seeded; a `noticed.md` entry lands with the commit
+   whose author noticed it. Committing the code without the plan that seeded it ships half the
+   change.
 3. **Process logs** — `.claude/work/`, `todos/`, subagent transcripts, and similar granular
    per-run records. Left untracked.
 

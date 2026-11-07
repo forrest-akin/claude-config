@@ -94,3 +94,11 @@ arguments is this rubric's own.
   assertion function.
 - **Duplicated assertion block**: the same asserts copied across tests. Extract a named assertion
   function, or parameterize the test.
+
+## Noticed and left alone
+
+- A smell or broken invariant outside the task's change is left alone and recorded in
+  `.claude/noticed.md` in the same commit, one line each:
+  `- <path>:<line> — <smell or invariant> — <curing move> — <YYYY-MM-DD>`.
+- Create the file with the heading `# Noticed and left alone` when it is missing. Plans dispose
+  of its entries (`plan-readiness`).
