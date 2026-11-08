@@ -7,14 +7,7 @@ description: Reclaim disk space on a macOS dev machine without breaking work tha
 
 ## The rule that matters most
 
-**Never delete without first asking what is running.** Build artifacts look
-identically disposable whether or not a session is mid-flight in them. Deleting
-`node_modules` or `target/` under active work produces failures that look like
-bugs in the work, not like cleanup — the most expensive possible outcome,
-because the time is lost to debugging the wrong thing.
-
-`bin/protect-list.sh` answers that question from live processes and recent
-session transcripts. Everything else is downstream of it.
+`bin/protect-list.sh` finds what is running. Everything else is downstream of it.
 
 ## Procedure
 
@@ -32,10 +25,7 @@ ranked by size against cost-to-restore and let the user choose what to act on.
 ## What the planner deliberately will not touch
 
 **Shared global caches** — `~/.m2/repository`, `~/.npm`, `~/.gradle/caches`,
-`~/.cache`. One cache serves every project, so it cannot be partitioned and any
-live session may depend on it. `~/.m2` in particular has no safe partial delete:
-a single Maven build anywhere needs it. These are surfaced by the survey for a
-human decision and never planned.
+`~/.cache`. See runbook §5.
 
 **Language runtimes and toolchains** — `.nvm`, `.asdf`, `.rustup`, `.ghcup`.
 Repos pin old versions via `.nvmrc` / `.tool-versions`; removing a major line
@@ -48,28 +38,15 @@ inside the VM does not shrink the host file.
 
 ## Reading the numbers honestly
 
-- **`du` counts a hard-linked file once per traversal.** Where a content-addressed
-  store is in use (pnpm), summing per-repo `node_modules` overstates real usage.
-  Trust the free-space delta from `df`, not the planned total.
-- **Sparse images**: `ls -lh` shows virtual size, `du` shows allocated blocks.
-  Quote `du`.
 - **`swap total = 0` on a near-full volume is the crash cause**, not a curiosity:
   there is no room to back swap, so memory pressure hard-crashes instead of
   paging. Report it when present — it means fixing disk fixes both symptoms.
 
-## When reclamation keeps recurring
-
-Repeated cleanup of the same artifacts is a structural problem, not a hygiene
-one. For Node fleets, a content-addressable store (pnpm) stores each package
-version once and hard-links it into every project. Measure the real sharing
-ratio on your own repos before promising a number — it varies enormously with
-how much version drift exists across the fleet.
-
 ## Reference
 
-- [`references/runbook.md`](references/runbook.md) — the full ordered procedure,
-  the survey→decide→apply loop, and the macOS-specific traps (BSD `xargs` has no
-  `-d`, `pgrep` can miss live processes, `stat -f %m`).
+- [`references/runbook.md`](references/runbook.md) — read before the first survey:
+  the ordered procedure, the survey→decide→apply loop, and macOS traps (BSD
+  `xargs` has no `-d`, `pgrep` can miss live processes, `stat -f %m`).
 - `lib/select.sh` — pure classification logic; `tests/test-select.sh` covers it.
   Both the live-session guard and the source-directory guard exist because a real
   scan nearly deleted something it should not have. Keep the tests green.
