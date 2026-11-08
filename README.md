@@ -62,13 +62,16 @@ python3 -m unittest discover -s skills/extension-authoring/tests
 `doc-drift`'s `bin/stale-refs` lists facts a diff removed that docs still state.
 `plan-readiness`'s `bin/noticed-scan <plan>` ranks the `.claude/noticed.md` entries a plan must
 dispose of. `workflow-design`'s `bin/wf-status <run>` reports each agent of a Workflow run and exits
-1 when one is over its call budget, idle or interrupted. `slide-rubric`'s `scripts/audit_slides.py`
-audits a deck, and the `disk-space-reclamation` scripts survey, select and apply a deletion plan.
+1 when one is over its call budget, idle or interrupted. `presentation-narrative`'s
+`scripts/check_timing.py` checks an outline's timing table against the talk's window.
+`slide-rubric`'s `scripts/audit_slides.py` audits a deck, and the `disk-space-reclamation` scripts
+survey, select and apply a deletion plan.
 
 ```bash
 python3 -m unittest discover -s skills/doc-drift/tests
 python3 -m unittest discover -s skills/plan-readiness/tests
 python3 -m unittest discover -s skills/workflow-design/tests
+python3 -m unittest discover -s skills/presentation-narrative/tests
 python3 -m unittest discover -s skills/slide-rubric/tests
 for t in skills/disk-space-reclamation/tests/*.sh; do bash "$t"; done
 ```

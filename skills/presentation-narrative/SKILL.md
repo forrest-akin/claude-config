@@ -17,7 +17,7 @@ Read `references/five-act-structure.md` before outlining a five-act talk.
 
 Read `references/pacing.md` when writing speaker notes or choosing a slide's type and duration. Key constraints:
 
-- Budget one content slide per 90 seconds: minutes × 60 ÷ 90 (15 minutes → 10).
+- Budget one content slide per 90 seconds: minutes × 60 ÷ 90 (15 minutes → 10); `python3 ${CLAUDE_SKILL_DIR}/scripts/check_timing.py <outline> --window <min>` checks the timing table.
 - **One takeaway per slide.** If a slide has two ideas, it needs to become two slides (or one idea needs to be cut).
 - **The CTA must be earned.** If the call to action could be delivered without the preceding slides, the narrative failed.
 - **Vary the energy.** Don't stack three "evidence" slides in a row. Alternate between data, quotes, diagrams, and assertions.
