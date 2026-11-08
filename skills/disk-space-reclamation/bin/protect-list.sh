@@ -129,7 +129,7 @@ TOO_COARSE=""
 # nothing *under a given subtree* is normal and expected when scanning a tree no
 # session happens to be working in, whereas finding nothing at all while
 # sessions are running means detection itself is broken.
-TOTAL=$(grep -c . "$TMP_OUT" 2>/dev/null || echo 0)
+TOTAL=$(grep -c . "$TMP_OUT")  # prints 0 and exits 1 when empty
 
 while IFS= read -r p; do
   [ -n "$p" ] || continue

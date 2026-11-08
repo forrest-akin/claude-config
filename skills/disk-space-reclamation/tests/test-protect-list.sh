@@ -18,6 +18,11 @@ printf '#!/bin/sh\n' > "$T/bin/lsof"
 fake_ps() { printf '#!/bin/sh\necho "  PID COMM"\n%s\n' "$1" > "$T/bin/ps"; chmod +x "$T/bin/ps" "$T/bin/lsof"; }
 run() { PATH="$T/bin:/usr/bin:/bin" bash "$PROTECT" "$@" 2>"$T/err"; }
 
+fake_ps 'echo "  123 claude"'
+run >/dev/null; code=$?
+check "live claude with nothing detected exits 3" 3 "$code"
+check "detection failure is named" 1 "$(grep -c 'detection failure' "$T/err")"
+
 fake_ps ':'
 run >/dev/null; code=$?
 check "no live claude and nothing detected exits 0" 0 "$code"
