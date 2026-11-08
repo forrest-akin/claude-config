@@ -37,5 +37,11 @@ is correlation and is dropped.
 
 ## Output
 
-About a page of prose: the symptom with time and impact; each causal layer with its
-counterfactual; the underlying cause; contributors not pursued; remediation; any control boundary.
+Write the record as:
+
+- **Symptom**: what was seen, when, impact.
+- **Chain**: table `layer | cause | counterfactual`.
+- **Underlying cause**: one sentence.
+- **Not pursued**: table `cause | counterfactual | independent, coupled or chained`.
+- **Remediation**: table `fix | targets (underlying, or contributing marked tactical)`.
+- **Control boundary**: what was inside and outside the team's control.
