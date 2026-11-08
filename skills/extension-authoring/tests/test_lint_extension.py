@@ -86,5 +86,38 @@ class Frontmatter(unittest.TestCase):
         self.assertEqual(lint(files, arg="a.md"), ("a.md:1: agent is skipped without `description`\n", 1))
 
 
+class Files(unittest.TestCase):
+    def test_relative_links_resolve(self):
+        body = "# Body\n\nSee [ref](references/ref.md), [gone](references/gone.md#top) and [web](https://x.dev).\n"
+        self.assertEqual(lint({"s/SKILL.md": skill(f"name: s\ndescription: {GOOD}\n", body), "s/references/ref.md": "x\n"}),
+                         ("s/SKILL.md:8: link target references/gone.md does not exist\n", 1))
+
+    def test_links_in_code_are_not_checked(self):
+        body = "# Body\n\n```md\nSee [ref](references/gone.md).\n```\n\nWrite `[ref](references/gone.md)` like this.\n"
+        self.assertEqual(lint({"s/SKILL.md": skill(f"name: s\ndescription: {GOOD}\n", body)}), ("", 0))
+
+    def test_preprocessing_hazards_in_a_skill_body(self):
+        body = "# Body\n\nRun `$ARGUMENTS` on $0, not \\$1.\n!`date`\n"
+        self.assertEqual(lint({"s/SKILL.md": skill(f"name: s\ndescription: {GOOD}\n", body), "s/notes.md": "$0 !`date`\n"}), (
+            "s/SKILL.md:8: `$ARGUMENTS` is substituted at load, code fences included; escape it as `\\$`\n"
+            "s/SKILL.md:8: `$0` is substituted at load, code fences included; escape it as `\\$`\n"
+            "s/SKILL.md:9: !`command` runs at load, before Claude reads the body; show it in a supporting file\n", 1))
+
+    def test_bash_4_syntax_under_bin_bash(self):
+        script = "#!/bin/bash\ndeclare -A seen\nmapfile -t xs < f\necho \"${name,,}\"\n"
+        self.assertEqual(lint({"s/SKILL.md": skill(f"name: s\ndescription: {GOOD}\n"), "s/bin/run": script,
+                               "s/bin/ok": "#!/usr/bin/env zsh\ndeclare -A seen\n"}), (
+            "s/bin/run:2: declare -A needs bash 4; macOS /bin/bash is 3.2\n"
+            "s/bin/run:3: mapfile needs bash 4; macOS /bin/bash is 3.2\n"
+            "s/bin/run:4: ${name,,} needs bash 4; macOS /bin/bash is 3.2\n", 1))
+
+    def test_bash_4_syntax_under_bash_with_flags_or_env(self):
+        self.assertEqual(lint({"s/SKILL.md": skill(f"name: s\ndescription: {GOOD}\n"),
+                               "s/bin/a": "#!/bin/bash -eu\nreadarray -t xs < f\n",
+                               "s/bin/b": "#!/usr/bin/env bash\necho \"${name^^}\"\n"}), (
+            "s/bin/a:2: readarray needs bash 4; macOS /bin/bash is 3.2\n"
+            "s/bin/b:2: ${name^^} needs bash 4; macOS /bin/bash is 3.2\n", 1))
+
+
 if __name__ == "__main__":
     unittest.main()

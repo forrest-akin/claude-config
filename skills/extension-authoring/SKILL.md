@@ -39,12 +39,9 @@ description: Writes and debugs Claude Code skills, subagents, hooks, rules and m
 
 ## Load-time preprocessing
 
-The body is rewritten when it loads. Argument placeholders (`\$ARGUMENTS`, `\$0`, declared
-names) are substituted everywhere, inside inline code and code fences included; a backslash
-before the dollar sign escapes one. An exclamation mark followed by a backticked command runs
-that command before Claude sees the body, inside a code fence too, and a failing command aborts
-the whole invocation. A skill that shows this syntax by example rewrites or runs itself: put
-live examples in a supporting file, which Claude reads unprocessed.
+The body is rewritten at load, code fences included: `lint-extension` lists the argument
+placeholders it would substitute and the commands it would run. Put live examples in a supporting
+file, which Claude reads unprocessed.
 
 ## Preload, fork, or neither
 

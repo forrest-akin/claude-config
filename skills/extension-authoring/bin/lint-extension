@@ -11,6 +11,11 @@ Platform facts, read 2026-11-07:
     back to the first non-empty body line.
   https://code.claude.com/docs/en/sub-agents.md "Frontmatter reference": the agent keys
     below, `name` and `description` required.
+  skills.md "Available string substitutions" and "Inject dynamic context": `$ARGUMENTS` and `$N`
+    are substituted in a SKILL.md body unless a backslash precedes them; !`command` after
+    whitespace or at line start runs at load. Supporting files are read unprocessed.
+Every file under <path> is also checked: relative markdown links outside code resolve, and a
+bash script uses no bash 4 syntax.
 """
 import os
 import re
@@ -18,6 +23,12 @@ import sys
 
 KEY = re.compile(r"^([A-Za-z_][\w-]*)\s*:(.*)$")
 LISTING_CAP = 1536
+BASH_SHEBANG = re.compile(r"#!(?:/bin/bash|/usr/bin/env bash)(?:[ \t]|\n|$)")
+BASH4 = re.compile(r"declare -A|\b(?:mapfile|readarray)\b|\$\{\w+(?:\^\^?|,,?)\}")
+PLACEHOLDER = re.compile(r"(?<!\\)(\$(?:ARGUMENTS|\d))")
+INLINE_COMMAND = re.compile(r"(?:^|\s)!`")
+INLINE_CODE = re.compile(r"`[^`]*`")
+LINK = re.compile(r"\]\((?![a-z]+:|#)([^)\s]+)\)")
 SKILL_KEYS = {"name", "description", "when_to_use", "argument-hint", "arguments", "disable-model-invocation",
               "user-invocable", "allowed-tools", "disallowed-tools", "model", "effort", "context", "agent",
               "background", "hooks", "paths", "shell", "metadata", "license", "compatibility"}
@@ -39,6 +50,36 @@ def targets(path):
         elif entry.endswith(".md"):
             found.append(os.path.join(path, entry))
     return found
+
+
+def files_under(path):
+    if os.path.isfile(path):
+        return [path]
+    return sorted(os.path.join(d, f) for d, _, names in os.walk(path) for f in names)
+
+
+def file_findings(path, text):
+    findings = []
+    if path.endswith(".md"):
+        findings += link_findings(path, text)
+    if BASH_SHEBANG.match(text):
+        findings += [(n, f"{m} needs bash 4; macOS /bin/bash is 3.2")
+                     for n, line in enumerate(text.splitlines(), start=1) for m in BASH4.findall(line)]
+    return findings
+
+
+def link_findings(path, text):
+    findings, fenced = [], False
+    for n, line in enumerate(text.splitlines(), start=1):
+        if line.lstrip().startswith(("```", "~~~")):
+            fenced = not fenced
+        if fenced:
+            continue
+        for target in LINK.findall(INLINE_CODE.sub("", line)):
+            target = target.split("#")[0]
+            if target and not os.path.exists(os.path.join(os.path.dirname(path), target)):
+                findings.append((n, f"link target {target} does not exist"))
+    return findings
 
 
 def frontmatter(lines):
@@ -74,6 +115,20 @@ def lint(path, text):
                  for k, (line, _) in keys.items() if k not in known]
     if "description" in keys:
         findings += description_findings(keys)
+    if not agent:
+        findings += preprocessing_findings(text)
+    return findings
+
+
+def preprocessing_findings(text):
+    lines = text.splitlines()
+    body = next((n for n in range(1, len(lines)) if lines[n].rstrip() == "---"), 0) + 1
+    findings = []
+    for n, line in enumerate(lines[body:], start=body + 1):
+        findings += [(n, f"`{m}` is substituted at load, code fences included; escape it as `\\$`")
+                     for m in PLACEHOLDER.findall(line)]
+        if INLINE_COMMAND.search(line):
+            findings.append((n, "!`command` runs at load, before Claude reads the body; show it in a supporting file"))
     return findings
 
 
@@ -108,6 +163,9 @@ def main(argv):
                 findings.append(f"{os.path.normpath(f)}: cannot read: not UTF-8")
                 continue
             findings += [f"{os.path.normpath(f)}:{line}: {reason}" for line, reason in lint(f, text)]
+        for f in files_under(argv[1]):
+            with open(f, errors="replace") as fh:
+                findings += [f"{os.path.normpath(f)}:{line}: {reason}" for line, reason in file_findings(f, fh.read())]
     except OSError as e:
         findings.append(f"{os.path.normpath(e.filename)}: cannot read: {e.strerror}")
     for finding in findings:
