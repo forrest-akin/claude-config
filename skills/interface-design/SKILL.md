@@ -11,8 +11,6 @@ spikes (`plan-readiness` "Comparative spike") and prototypes supply evidence to 
 ## The interview
 
 - Each answer goes into the draft, attributed to the human.
-- The interview has converged when every public signature, every invariant, the precedence order
-  and the frozen paths have an attributed answer. An item still open becomes a stop condition.
 
 ## Questions
 
@@ -63,7 +61,8 @@ New interfaces are single-method by default.
 ## The draft
 
 Copy `templates/interface-draft.md` to `.claude/interfaces/<area>.md` and fill every
-placeholder. The draft has converged when no item lacks an attribution.
+placeholder. The draft has converged when `${CLAUDE_SKILL_DIR}/bin/interface-check <draft>` exits
+0; it lists each unattributed item.
 
 The implementer prompt names the draft and says: after your first commit, the interface file,
 `docs/invariants/<area>.md` and `tests/invariants/` are frozen; if the interface makes the

@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+"""Usage: interface-check <draft>
+
+Checks an interface draft against templates/interface-draft.md. Prints one finding per line and
+exits 1 when there is any; silent with exit 0 when the draft has converged.
+"""
+import os
+import re
+import sys
+
+INVARIANTS = "## 2. Invariants"
+ITEM = re.compile(r"^(- |\d+\. )")
+ATTRIBUTION = re.compile(r" — [^<>—]+, \d{4}-\d{2}-\d{2}$")
+PLACEHOLDER_ATTRIBUTION = " — <name>, <YYYY-MM-DD>"
+FIXED = {"## 6. Stop conditions": "stop conditions", "## 7. Standing rules": "standing rules"}
+
+TEMPLATE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates",
+                        "interface-draft.md")
+
+
+def headings(text):
+    return [line for line in text.splitlines() if line.startswith("## ")]
+
+
+def heading_findings(draft, template):
+    found, expected = headings(draft), headings(template)
+    for n, want in enumerate(expected, 1):
+        got = found[n - 1] if n <= len(found) else "nothing"
+        if got != want:
+            return [f'heading {n}: expected "{want}", found "{got}"']
+    return []
+
+
+def sections(text):
+    found, body = {}, None
+    for line in text.splitlines():
+        if line.startswith("## "):
+            body = found.setdefault(line, [])
+        elif body is not None:
+            body.append(line)
+    return found
+
+
+def items(lines):
+    found = []
+    for line in lines:
+        if ITEM.match(line):
+            found.append(line)
+        elif found and line.startswith(" "):
+            found[-1] += " " + line.strip()
+    return found
+
+
+def invariant_findings(draft_sections):
+    invariants = items(draft_sections.get(INVARIANTS, []))
+    if not invariants:
+        return ["no numbered invariants"]
+    return [f"invariant {n} is not numbered {n}.: {item}" for n, item in enumerate(invariants, 1)
+            if not item.startswith(f"{n}. ")]
+
+
+def attribution_findings(draft_sections, template_sections):
+    attributed = [heading for heading, body in template_sections.items()
+                  if any(item.endswith(PLACEHOLDER_ATTRIBUTION) for item in items(body))]
+    return [f"unattributed: {heading}: {item}" for heading in attributed
+            for item in items(draft_sections.get(heading, [])) if not ATTRIBUTION.search(item)]
+
+
+def fixed_text(body):
+    end = body.index("Still open:") if "Still open:" in body else len(body)
+    return "\n".join(body[:end]).strip()
+
+
+def fixed_text_findings(draft_sections, template_sections):
+    return [f"{name} differ from the template" for heading, name in FIXED.items()
+            if fixed_text(draft_sections.get(heading, [])) != fixed_text(template_sections[heading])]
+
+
+def findings(draft, template):
+    draft_sections, template_sections = sections(draft), sections(template)
+    return (heading_findings(draft, template) + invariant_findings(draft_sections)
+            + attribution_findings(draft_sections, template_sections)
+            + fixed_text_findings(draft_sections, template_sections))
+
+
+def main(argv):
+    if len(argv) != 2:
+        print("usage: interface-check <draft>", file=sys.stderr)
+        return 2
+    with open(TEMPLATE, encoding="utf-8") as f:
+        template = f.read()
+    try:
+        with open(argv[1], encoding="utf-8") as f:
+            found = findings(f.read(), template)
+    except (OSError, UnicodeDecodeError):
+        found = [f"unreadable: {argv[1]}"]
+    for finding in found:
+        print(finding)
+    return 1 if found else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

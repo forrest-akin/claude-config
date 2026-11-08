@@ -72,11 +72,13 @@ mise), and its `bin/notice` appends a line to `.claude/noticed.md`; `plan-readin
 budget, idle or interrupted. `presentation-narrative`'s `scripts/check_timing.py` checks an
 outline's timing table against the talk's window. `slide-rubric`'s `scripts/audit_slides.py` audits
 a deck, and the `disk-space-reclamation` scripts survey, select and apply a deletion plan.
+`interface-design`'s `bin/interface-check <draft>` checks an interface draft against its template.
 
 ```bash
 python3 -m unittest discover -s skills/commit-sequencing/tests
 python3 -m unittest discover -s skills/doc-drift/tests
 python3 -m unittest discover -s skills/design-rubric/tests
+python3 -m unittest discover -s skills/interface-design/tests
 python3 -m unittest discover -s skills/plan-readiness/tests
 python3 -m unittest discover -s skills/workflow-design/tests
 python3 -m unittest discover -s skills/presentation-narrative/tests
