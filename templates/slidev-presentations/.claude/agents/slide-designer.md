@@ -26,7 +26,7 @@ Presentations in this repo are for engineering audiences:
 ## When designing slides
 
 1. **Understand the goal** — Ask: what should the audience know/do/feel differently after this talk?
-2. **Propose a narrative arc** — Provocation → Context → Evidence → Reframe → Action (the `presentation-narrative` five acts)
+2. **Propose a narrative arc** — the shape that fits the material (`presentation-narrative`); five acts is one option
 3. **Draft slide titles first** — A good slide title is a sentence, not a noun phrase ("We reduced P99 by 40%" > "Performance")
 4. **Use Slidev layouts appropriately**:
    - `layout: cover` — title/section openers

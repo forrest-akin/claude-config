@@ -4,17 +4,6 @@
 
 **Speaking rate:** Conversational pace is ~150 words/minute. Presentation pace (with pauses for emphasis, looking at audience, transitioning) is ~130-140 words/minute.
 
-**Per-slide time budget:**
-
-| Talk length | Content slides | Time per slide |
-|-------------|---------------|----------------|
-| 5 min (lightning) | 4-5 | 60 seconds |
-| 10 min | 7-8 | 75 seconds |
-| 15 min | 9-11 | 85-95 seconds |
-| 20 min | 12-14 | 85-95 seconds |
-| 30 min | 18-22 | 80-90 seconds |
-| 45 min | 25-30 | 90 seconds |
-
 **Speaker notes word count:** At 135 wpm presentation pace:
 - 60-second slide: ~135 words of notes
 - 90-second slide: ~200 words of notes
@@ -74,29 +63,3 @@ Transitions between slides are where amateur talks lose their audience. Every tr
 - Action bridge: "Which brings us to something concrete." → [CTA slide]
 
 **Write transitions INTO the speaker notes.** The last 1-2 sentences of every slide's notes should set up the next slide.
-
-## Energy Map
-
-A well-paced talk has an energy curve. Map it before building slides:
-
-```
-Energy
-  │
-  │     ╱╲
-  │    ╱  ╲      ╱╲
-  │   ╱    ╲    ╱  ╲         ╱╲
-  │  ╱      ╲  ╱    ╲       ╱  │
-  │ ╱        ╲╱      ╲     ╱   │
-  │╱                   ╲   ╱    │
-  │                     ╲─╱     │
-  └──────────────────────────────
-   Open  Context  Evidence  CTA
-```
-
-- **Open high:** The provocation grabs attention
-- **Dip for context:** Necessary but lower energy — keep it short
-- **Build through evidence:** Each piece raises the stakes
-- **Brief dip before reframe:** Let the evidence settle
-- **Peak at CTA:** End with energy and clarity
-
-**If your outline has the energy curve flat or declining, restructure.** A talk that opens with definitions and ends with conclusions is a lecture, not a talk.

@@ -5,38 +5,19 @@ description: Designs a talk's story arc, pacing and slide outline from source ma
 
 # Presentation Narrative Design
 
-Transform source material into a compelling presentation narrative. This skill produces a structured slide outline — NOT slide code or visuals. It focuses on what every great talk needs: a story that earns its conclusion.
-
-## When to Use
-
-- Turning an article, document, or set of ideas into a presentation
-- Structuring a conference talk, team presentation, or pitch
-- Designing the narrative arc before building slides
-- Choosing what to cut from dense source material
-
 ## Narrative Architecture Framework
 
-Every effective presentation follows a tension-resolution arc. The audience needs to feel a question, a discomfort, or a gap in their understanding — and the presentation progressively resolves it.
+Choose the arc that fits the material before outlining. Five acts (below) suits a talk that unsettles one belief; a teaching session can be a ladder of versions, each fixing the last one's failure; a walkthrough follows the system's own order. Ask the presenter when the material does not decide it.
 
 ### The Five-Act Structure for Technical Talks
 
-Read `references/five-act-structure.md` for the full framework. Summary:
-
-| Act | Purpose | Emotional state | Slides |
-|-----|---------|-----------------|--------|
-| 1. Provocation | Disrupt a belief the audience holds | Curiosity, mild discomfort | 1-2 |
-| 2. Context | Give them the backstory they need | "I didn't know that" | 2-3 |
-| 3. Evidence | Build the case with specific proof | Growing conviction | 2-3 |
-| 4. Reframe | Show them the new way to think | "Oh, that changes things" | 1-2 |
-| 5. Action | Tell them exactly what to do next | Motivated, clear | 1-2 |
-
-Total: 8-12 content slides + title + closing = 10-14 slides.
+Read `references/five-act-structure.md` before outlining a five-act talk.
 
 ### Pacing Rules
 
-Read `references/pacing.md` for detailed pacing guidance. Key constraints:
+Read `references/pacing.md` when writing speaker notes or choosing a slide's type and duration. Key constraints:
 
-- **90-second rule:** Average ~90 seconds per slide for a talk. For a 15-minute talk, that's 10 content slides max.
+- Budget one content slide per 90 seconds: minutes × 60 ÷ 90 (15 minutes → 10).
 - **One takeaway per slide.** If a slide has two ideas, it needs to become two slides (or one idea needs to be cut).
 - **The CTA must be earned.** If the call to action could be delivered without the preceding slides, the narrative failed.
 - **Vary the energy.** Don't stack three "evidence" slides in a row. Alternate between data, quotes, diagrams, and assertions.
@@ -55,9 +36,9 @@ If you can't fill this template, the talk doesn't have a clear argument yet. Wor
 
 What does this audience currently believe? What assumption will the talk challenge? The gap between their starting belief and the talk's conclusion is the narrative engine.
 
-### Step 3: Map the source material to the five acts
+### Step 3: Map the source material to the arc
 
-Go through the source material and tag each section/idea with an act:
+Go through the source material and tag each section/idea with its part of the arc. For five acts:
 - What provokes? (contradicts the audience's assumption)
 - What contextualizes? (history, background)
 - What proves? (data, quotes, specific evidence)
@@ -97,22 +78,3 @@ When specifying visuals for slides, follow these principles:
 **When a figure IS needed, specify:**
 - The visual TYPE (flowchart, timeline, comparison, scale/balance, etc.)
 - What it communicates in ONE sentence
-- The maximum number of elements (aim for 3-5)
-
-**Visual variety across the deck:**
-Don't use the same visual type for consecutive slides. Aim for this kind of rhythm:
-```
-Slide 1: Quote card
-Slide 2: Single statistic
-Slide 3: Timeline diagram
-Slide 4: Text with v-click reveals
-Slide 5: Comparison diagram
-Slide 6: Quote card
-Slide 7: Flowchart
-...
-```
-
-## Reference Files
-
-- `references/five-act-structure.md` — The complete five-act framework with examples
-- `references/pacing.md` — Timing, density, and rhythm guidelines

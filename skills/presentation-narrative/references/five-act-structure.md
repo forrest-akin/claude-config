@@ -102,19 +102,3 @@ The five-act structure creates a narrative where the audience *needs* to hear ea
 **Common failure:** A CTA that doesn't follow from the narrative. If you could deliver the CTA without the preceding 12 slides, the talk failed as a narrative — it was just a preamble to an announcement.
 
 **Slide density:** Minimal. The CTA itself, a link or next step, and nothing else. End clean.
-
-## Slide-Count Budget
-
-For a 15-minute talk at 90 seconds per slide:
-
-| Component | Slides | Time |
-|-----------|--------|------|
-| Title | 1 | 30s (intro, settle) |
-| Act 1: Provocation | 1-2 | 1.5-3 min |
-| Act 2: Context | 2-3 | 3-4.5 min |
-| Act 3: Evidence | 2-3 | 3-4.5 min |
-| Act 4: Reframe | 1-2 | 1.5-3 min |
-| Act 5: Action | 1-2 | 1.5-3 min |
-| **Total** | **8-13** | **~15 min** |
-
-If your outline exceeds 13 slides, you have too much material. Cut from Acts 2 and 3 first — they're the most likely to bloat.
