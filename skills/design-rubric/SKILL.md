@@ -91,8 +91,6 @@ Run before each commit of production code over the files it touches, and in ever
 
 ## Noticed and left alone
 
-- A smell or broken invariant outside the task's change is left alone and recorded in
-  `.claude/noticed.md` in the same commit, one line each:
-  `- <path>:<line> — <smell or invariant> — <curing move> — <YYYY-MM-DD>`.
-- Create the file with the heading `# Noticed and left alone` when it is missing. Plans dispose
-  of its entries (`plan-readiness`).
+A smell or broken invariant outside the task's change is left alone and recorded in the same
+commit: `${CLAUDE_SKILL_DIR}/bin/notice <path:line> <smell or invariant> <curing move>` appends
+it to `.claude/noticed.md` at the repo top level, from any directory. Plans dispose of its entries (`plan-readiness`).

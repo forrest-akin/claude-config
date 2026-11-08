@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+"""Appends a dated line to .claude/noticed.md at the git top level.
+
+Usage: notice <path:line> <smell or invariant> <curing move>
+"""
+import datetime
+import os
+import re
+import subprocess
+import sys
+
+HEADING = "# Noticed and left alone\n\n"
+USAGE = "usage: notice <path:line> <smell or invariant> <curing move>\n"
+LOCATION = re.compile(r"[^\s:]+:\d+")
+
+
+def main(argv):
+    if len(argv) != 4 or not LOCATION.fullmatch(argv[1]):
+        sys.stderr.write(USAGE)
+        return 2
+    location, smell, move = argv[1:]
+    top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    if top.returncode != 0:
+        sys.stderr.write("error: not a git repository\n")
+        return 2
+    path = os.path.join(top.stdout.strip(), ".claude", "noticed.md")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    new = not os.path.exists(path)
+    with open(path, "a", encoding="utf-8") as f:
+        if new:
+            f.write(HEADING)
+        f.write(f"- {location} — {smell} — {move} — {datetime.date.today().isoformat()}\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
