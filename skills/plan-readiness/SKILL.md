@@ -88,7 +88,8 @@ A stub plan's deliberately empty sections are skipped; everything it does contai
 
 ## Review discipline
 
-- Evaluate every check, even after one fails.
+- Report every Blocking and Should fix check as a row: check, verdict (pass, fail or n/a), one
+  sentence naming the section. A missing row is a skipped check.
 - Report each problem in one sentence that names its section. Three or more findings that break
   one plan-wide rule the same way are reported as one finding naming the rule the plan should
   state once. Nothing to report is a valid result.
