@@ -10,7 +10,8 @@ check() { if [ "$2" = "$3" ]; then echo "ok   $1"; else echo "FAIL $1: expected 
 if [ "$#" -eq 0 ]; then
   set -- "$repo/skills/workflow-design/SKILL.md" \
     "$repo/skills/workflow-design/templates/implementer-block.md" \
-    "$repo/skills/interface-design/example.md"
+    "$repo/skills/interface-design/example.md" \
+    "$repo/skills/interface-design/templates/interface-draft.md"
 fi
 
 for f in "$@"; do

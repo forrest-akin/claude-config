@@ -60,22 +60,8 @@ New interfaces are single-method by default.
 
 ## The draft
 
-The main session writes `.claude/interfaces/<area>.md` with these sections, in order:
-
-1. Signatures and types, each with a one-line contract. No bodies.
-2. Invariants, numbered.
-3. Two throwaway callers written against the signatures for two different uses, noting anything
-   awkward to write.
-4. Precedence: which rule wins when two collide.
-5. Frozen paths.
-6. Stop conditions: the three in `workflow-design` "Executing a plan", and each item still open.
-7. Standing rules, copied as written here:
-   - Old code is not an example.
-   - A function that breaks an invariant is brought into line first, as its own
-     behaviour-preserving commit with existing tests green, before it is extended.
-   - One evaluation outranks narrow interfaces: an entry point that needs more inputs gets a typed
-     input rather than being left behind.
-   - Tidy-first outranks smallest diff.
+Copy `templates/interface-draft.md` to `.claude/interfaces/<area>.md` and fill every
+placeholder. The draft has converged when no item lacks an attribution.
 
 The implementer prompt names the draft and says: after your first commit, the interface file,
 `docs/invariants/<area>.md` and `tests/invariants/` are frozen; if the interface makes the
