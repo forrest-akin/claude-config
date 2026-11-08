@@ -62,13 +62,15 @@ python3 -m unittest discover -s skills/extension-authoring/tests
 
 ## Skill scripts
 
-`doc-drift`'s `bin/stale-refs` lists facts a diff removed that docs still state.
-`design-rubric`'s `bin/notice` appends a line to `.claude/noticed.md`, and `plan-readiness`'s
-`bin/noticed-scan <plan>` ranks the entries a plan must dispose of. `workflow-design`'s
-`bin/wf-status <run>` reports each agent of a Workflow run and exits 1 when one is over its call
-budget, idle or interrupted. `presentation-narrative`'s `scripts/check_timing.py` checks an
-outline's timing table against the talk's window. `slide-rubric`'s `scripts/audit_slides.py` audits
-a deck, and the `disk-space-reclamation` scripts survey, select and apply a deletion plan.
+`doc-drift`'s `bin/stale-refs` lists facts a diff removed that docs still state. `design-rubric`'s
+`bin/health-delta` lists functions a diff took past a lizard threshold (the suite needs lizard on
+`PATH` or installed by mise), and its `bin/notice` appends a line to `.claude/noticed.md`;
+`plan-readiness`'s `bin/noticed-scan <plan>` ranks the entries a plan must dispose of.
+`workflow-design`'s `bin/wf-status <run>` reports each agent of a Workflow run and exits 1 when one
+is over its call budget, idle or interrupted. `presentation-narrative`'s `scripts/check_timing.py`
+checks an outline's timing table against the talk's window. `slide-rubric`'s
+`scripts/audit_slides.py` audits a deck, and the `disk-space-reclamation` scripts survey, select and
+apply a deletion plan.
 
 ```bash
 python3 -m unittest discover -s skills/doc-drift/tests

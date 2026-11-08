@@ -13,7 +13,8 @@ Run before each commit of production code over the files it touches, and in ever
 - The two interface numbers never worsen past what the plan's task states: public names, and
   parameters per public function.
 - Files that keep changing together across commits mark a leaky boundary: report the pair.
-- An accepted smell carries a comment directly above it naming the smell, the rationale and the date.
+- An accepted smell carries the comment `smell: <factor> — <rationale> — <YYYY-MM-DD>` on the line
+  directly above its function; `health-delta` skips that function.
 
 ## Principles
 
@@ -65,18 +66,17 @@ Run before each commit of production code over the files it touches, and in ever
 
 ## Health factors
 
-- **Large method**: many lines in one function. Extract Function.
+From the repo root, `${CLAUDE_SKILL_DIR}/bin/health-delta [BASE]` (default `HEAD`) lists each
+function the change took past 30 lines, cyclomatic complexity 7, 3 parameters or nesting depth 2,
+or worsened while past one, with its cure. It needs lizard (`mise use -g pipx:lizard`).
+Lizard does not measure the smells below; judge them by reading.
+
 - **Brain method**: a large, complex function at the centre of its module's behaviour. Extract
   Function per responsibility; Split Phase.
-- **Complex method**: many conditional statements (`if`, `for`, `while`) in one function.
-  Decompose Conditional; Replace Conditional with Polymorphism.
-- **Nested complexity**: an `if` inside another `if` or a loop. Replace Nested Conditional with
-  Guard Clauses.
 - **Bumpy road**: several separate chunks of nested logic in one function. Extract Function per
   chunk.
 - **Complex conditional**: a branch condition joining several `&&` or `||` operators. Decompose
   Conditional into named predicates.
-- **Excess arguments**: a function that wants a fourth argument. Introduce Parameter Object.
 - **Primitive obsession**: domain values passed as bare strings, integers or floats. Replace
   Primitive with Object.
 - **DRY violations**: copied logic that changes together. Extract Function at the third copy.
