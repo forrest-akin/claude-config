@@ -1,6 +1,6 @@
 ---
 name: presentation-narrative
-description: Designs a talk's story arc, pacing and slide outline from source material (an article, doc or notes). Use when asked to create a presentation outline, structure a talk about X, design the narrative for a deck, organize slides, or distill content into a presentation. Not for slide code or figures (slide-svg-figures).
+description: Designs a talk's story arc, pacing and slide outline from source material (an article, doc or notes). Use when asked to create a presentation outline, structure a talk about X, design the narrative for a deck, organize slides, or distill content into a presentation. Not for slide code or figures (slide-rubric).
 ---
 
 # Presentation Narrative Design

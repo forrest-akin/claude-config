@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Slide Auditor — Validates Slidev slides.md files for quality issues.
+Slide rubric audit — validates Slidev slides.md files for quality issues.
 
 Checks SVG dimensions, font sizes, element counts, color consistency,
 slide word counts, speaker notes presence/length, and structural integrity.
@@ -122,7 +122,7 @@ KNOWN_LAYOUTS = {
     "iframe", "iframe-left", "iframe-right",
 }
 
-MAX_VIEWBOX_W = 900  # slide-svg-figures/references/slidev-canvas.md
+MAX_VIEWBOX_W = 900  # references/slidev-canvas.md
 MAX_VIEWBOX_H = 380
 MAX_ELEMENTS_PER_SVG = 7
 MIN_FONT_SIZE = 14

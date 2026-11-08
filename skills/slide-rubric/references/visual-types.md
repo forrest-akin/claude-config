@@ -25,8 +25,8 @@ Ask: "What is the ONE thing this figure communicates?" Then match to a type:
 
   Elements:
     Box A: x=40,  y=60, w=200, h=80 → right: 240
-    Box B: x=325, y=60, w=200, h=80 → right: 525 (gap: 85px ✓)
-    Box C: x=610, y=60, w=200, h=80 → right: 810 (gap: 85px ✓)
+    Box B: x=325, y=60, w=200, h=80 → right: 525
+    Box C: x=610, y=60, w=200, h=80 → right: 810
     Arrow A→B: (240,100) to (315,100)
     Arrow B→C: (525,100) to (600,100)
 -->
@@ -61,11 +61,11 @@ Ask: "What is the ONE thing this figure communicates?" Then match to a type:
 <!-- LAYOUT PLAN
   Figure purpose: Compare two approaches
   Canvas: viewBox="0 0 850 300"
-  Element count: 5 (2 boxes + divider line + 2 header labels)
+  Element count: 3 (2 boxes + divider line)
 
   Elements:
     Left panel:   x=30,  y=60,  w=380, h=220 → right: 410
-    Right panel:  x=460, y=60,  w=380, h=220 → left: 460 (gap: 50px ✓)
+    Right panel:  x=460, y=60,  w=380, h=220 → left: 460
     Divider:      x=435, y=40 to y=300
     Left label:   x=220, y=40
     Right label:  x=650, y=40
@@ -91,7 +91,7 @@ Effective for showing "we value X MORE, but Y still has value":
 <!-- LAYOUT PLAN
   Figure purpose: Show weighted balance between two values
   Canvas: viewBox="0 0 850 280"
-  Element count: 5 (fulcrum + beam + 2 pans + 2 labels)
+  Element count: 4 (fulcrum + beam + 2 pans)
 
   Elements:
     Fulcrum:      triangle at x=425, y=240, base=60
@@ -113,9 +113,9 @@ Effective for showing "we value X MORE, but Y still has value":
 
   Elements:
     Layer 1 (top):    x=100, y=20,  w=400, h=60
-    Layer 2:          x=100, y=100, w=400, h=60 (gap: 20px ✓)
-    Layer 3:          x=100, y=180, w=400, h=60 (gap: 20px ✓)
-    Layer 4 (bottom): x=100, y=260, w=400, h=60 (gap: 20px ✓)
+    Layer 2:          x=100, y=100, w=400, h=60
+    Layer 3:          x=100, y=180, w=400, h=60
+    Layer 4 (bottom): x=100, y=260, w=400, h=60
 -->
 ```
 
