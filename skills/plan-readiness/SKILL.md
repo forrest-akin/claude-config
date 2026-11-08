@@ -35,7 +35,7 @@ Run in order; stop at the first that applies.
   agent per approach, each in its own worktree, with prompts identical except for the approach;
   arms never share a context. The human names the arms, or Claude asks which candidates to build.
 - Arms are built red-green so their testability can be measured. The winning arm may be kept.
-- The judge table has a column for each of: `design-rubric` findings; the three interface
+- The judge table has a column for each of: `design-rubric` findings; the two interface
   numbers; diff size for the slice; setup lines per behaviour; fakes and stubs, and whether any
   is a mock; whether core tests run with no I/O, clock or environment; whether the acceptance
   test could be written against the signatures before any body; tests changed when the slice

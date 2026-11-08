@@ -10,14 +10,10 @@ description: Judges a diff's design against principles and code-health smells, a
 Run before each commit of production code over the files it touches, and in every design review.
 
 - No touched file gains or worsens a smell from "Health factors".
-- The three interface numbers never worsen past what the plan's task states: public names,
-  parameters per public function, and disagreements between entry points (inputs on which two
-  public functions give different answers), counted by the area's agreement test under
-  `tests/invariants/`. Disagreements outrank the other two: an entry point
-  that needs more inputs gets one typed input rather than disagree.
+- The two interface numbers never worsen past what the plan's task states: public names, and
+  parameters per public function.
 - Files that keep changing together across commits mark a leaky boundary: report the pair.
 - An accepted smell carries a comment directly above it naming the smell, the rationale and the date.
-- Each cure is the move this rubric names, carried out per `refactoring`.
 
 ## Principles
 
@@ -68,10 +64,6 @@ Run before each commit of production code over the files it touches, and in ever
   Class until the third use exists.
 
 ## Health factors
-
-Smells with a measured link to defect rates and maintenance cost, from CodeScene's Code Health
-research ([code-health](https://codescene.io/docs/guides/technical/code-health.html)); excess
-arguments is this rubric's own.
 
 - **Large method**: many lines in one function. Extract Function.
 - **Brain method**: a large, complex function at the centre of its module's behaviour. Extract
