@@ -25,17 +25,20 @@ Runs the installer against a fixture repo and a temporary `HOME`.
 
 ## Hooks
 
-`install.sh` registers `call-budget.sh` on PostToolUse and `bash-prefix.sh` on PreToolUse
-(Bash) in `~/.claude/settings.json`, adding each entry once.
+`install.sh` registers `call-budget.sh` on PostToolUse, `diff-size.sh` on PostToolUse (Edit|Write)
+and `bash-prefix.sh` on PreToolUse (Bash) in `~/.claude/settings.json`, adding each entry once.
 
 - `call-budget.sh` tells an agent its tool-call count when it reaches 80% of the budget its first
   prompt names (the phrasings in `test/fixtures/budget-phrasings.txt`) and on every call from 100%.
+- `diff-size.sh` tells the model the uncommitted size of the edited file's repo on every Edit or
+  Write while it is over 200 lines or 4 files.
 - `bash-prefix.sh` denies a Bash command that starts with `NAME=value` or `cd`, quoting
   `CLAUDE.md` "Bash commands".
 
 ```bash
 bash test/call-budget.test.sh
 bash test/bash-prefix.test.sh
+bash test/diff-size.test.sh
 ```
 
 ## Stop conditions

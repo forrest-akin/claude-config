@@ -12,7 +12,7 @@ fixture() {
   repo="$tmp/repo"; home="$tmp/home"
   mkdir -p "$repo/skills/alpha" "$repo/skills/beta" "$repo/hooks" "$home"
   echo a > "$repo/skills/alpha/SKILL.md"; echo b > "$repo/skills/beta/SKILL.md"
-  echo g > "$repo/hooks/gamma.sh"; echo cb > "$repo/hooks/call-budget.sh"; echo bp > "$repo/hooks/bash-prefix.sh"
+  echo g > "$repo/hooks/gamma.sh"; echo cb > "$repo/hooks/call-budget.sh"; echo bp > "$repo/hooks/bash-prefix.sh"; echo ds > "$repo/hooks/diff-size.sh"
   echo c > "$repo/CLAUDE.md"
   cp "$src" "$repo/install.sh"
 }
@@ -27,11 +27,11 @@ check "skill alpha linked" "$repo/skills/alpha" "$(readlink "$home/.claude/skill
 check "skill beta linked" "$repo/skills/beta" "$(readlink "$home/.claude/skills/beta")"
 check "hook gamma linked" "$repo/hooks/gamma.sh" "$(readlink "$home/.claude/hooks/gamma.sh")"
 check "hook gamma with no row named unregistered" 1 "$(grep -c -x 'unregistered: gamma.sh' "$tmp/out")"
-check "call-budget registered on PostToolUse" "[$(entry "" call-budget.sh)]" "$(entries PostToolUse)"
+check "call-budget and diff-size (Edit|Write) registered on PostToolUse" "[$(entry "" call-budget.sh),$(entry "Edit|Write" diff-size.sh)]" "$(entries PostToolUse)"
 check "bash-prefix registered on PreToolUse for Bash" "[$(entry Bash bash-prefix.sh)]" "$(entries PreToolUse)"
 check "second run exits 0" 0 "$(run)"
 check "second run keeps link" "$repo/skills/alpha" "$(readlink "$home/.claude/skills/alpha")"
-check "second run registers call-budget once" "[$(entry "" call-budget.sh)]" "$(entries PostToolUse)"
+check "second run registers call-budget and diff-size once" "[$(entry "" call-budget.sh),$(entry "Edit|Write" diff-size.sh)]" "$(entries PostToolUse)"
 check "second run registers bash-prefix once" "[$(entry Bash bash-prefix.sh)]" "$(entries PreToolUse)"
 
 fixture
@@ -41,7 +41,7 @@ echo "{\"model\":\"opus\",\"hooks\":{\"Notification\":[$notify]}}" > "$home/.cla
 check "existing settings exits 0" 0 "$(run)"
 check "existing Notification entry kept" "[$notify]" "$(entries Notification)"
 check "unrelated key kept" opus "$(jq -r .model "$home/.claude/settings.json")"
-check "existing settings gains call-budget" "[$(entry "" call-budget.sh)]" "$(entries PostToolUse)"
+check "existing settings gains call-budget and diff-size" "[$(entry "" call-budget.sh),$(entry "Edit|Write" diff-size.sh)]" "$(entries PostToolUse)"
 real="$tmp/dotfiles-settings.json"; mv "$home/.claude/settings.json" "$real"; ln -s "$real" "$home/.claude/settings.json"; touch -t 202001010000 "$real"
 check "linked settings exits 0" 0 "$(run)"
 check "linked settings stays a link" "$real" "$(readlink "$home/.claude/settings.json")"

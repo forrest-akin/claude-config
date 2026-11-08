@@ -42,7 +42,6 @@ description: Restructures code without changing behavior, one named move per gre
 
 ## Stop when
 
-- Past about four files or 200 lines since the last commit, the work has become a redesign:
-  commit the green part and raise the design question.
+- When diff-size reports 200 lines or 4 files, commit the green part and raise the design question.
 - When a feature idea comes up, write it down, finish or revert the current move, then switch.
 - With no clearly right next move, go back to diagnosis.

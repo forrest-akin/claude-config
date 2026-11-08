@@ -1,7 +1,8 @@
 #!/bin/bash
 # Symlinks CLAUDE.md, every skills/* and every hooks/*.sh into ~/.claude. Replaces nothing it did not create,
 # and removes its own links whose target in this repo is missing.
-# Registers call-budget.sh on PostToolUse and bash-prefix.sh on PreToolUse (Bash) in ~/.claude/settings.json, adding each entry once.
+# Registers call-budget.sh on PostToolUse, diff-size.sh on PostToolUse (Edit|Write) and bash-prefix.sh on PreToolUse (Bash)
+# in ~/.claude/settings.json, adding each entry once.
 set -u
 repo="$(cd "$(dirname "$0")" && pwd)"
 dest="$HOME/.claude"
@@ -46,6 +47,7 @@ done
 
 # name|event|matcher
 hook_events='call-budget.sh|PostToolUse|
+diff-size.sh|PostToolUse|Edit|Write
 bash-prefix.sh|PreToolUse|Bash'
 json="$(cat "$settings" 2>/dev/null || echo '{}')"
 for file in "$repo"/hooks/*.sh; do
