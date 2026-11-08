@@ -14,14 +14,7 @@ description: Designs a multi-agent Workflow script that survives its own failure
 
 - Never spend an agent on an answer a machine can produce (registry lookup, build, grep). The
   orchestrator fetches it and passes the result. Agents are for judgment.
-- Every prompt names the cheapest exact source for its facts, a hard call budget, and a
-  "return it marked unverified" exit.
-- Checkpoint: the agent appends results to a file as it goes, reads that file first on start,
-  skips what is done, and returns a short summary plus the path. Deliverables are drafted in
-  small incremental writes.
-- Shared inputs are files named by absolute path, never inlined.
-- A missing input is noted and skipped, never waited on.
-- No stage assumes its predecessor returned anything.
+- Start every agent prompt with `templates/agent-preamble.md`.
 - After a retry, re-verify anything a gate rests on instead of trusting the agent's checkpoint.
 - Check a cheap model's structured output against the set of input IDs before acting on it, and
   drop rows that name no input.
@@ -52,10 +45,8 @@ Set per stage, never blanket (`subagent-model-tiering`).
 
 ## Shape
 
-- Installments instead of bare caps. Each installment ends with a report: findings, files read
-  with a one-line takeaway each, open questions each with what would answer it, next focus. A
-  fresh agent seeded by the report continues only on named questions. About three installments
-  at most.
+- Installments instead of bare caps, about three at most, each ending with
+  `templates/installment-report.md`.
 - Start downstream work on the first finished upstream items instead of waiting for the phase.
 - Independent lanes (repos, services) run as separate workflows, each launched when its own
   previous phase returns. Before launch, write each item's real dependencies (what it consumes,
@@ -83,24 +74,18 @@ Set per stage, never blanket (`subagent-model-tiering`).
 - Size an implementer's batch from its files (about three calls each) plus a few calls for each
   task that writes code and for each commit's skill loads and `doc-drift` search; end the batch
   at the call budget or at a commit boundary.
-- An implementer prompt tells it to load `doc-drift` and `design-rubric` before every commit,
-  `error-modeling` when the commit adds a failure path, and `commit-sequencing` when it moves
-  code.
-- An implementer prompt also says: when two shapes fit the next test, drive both to green and keep
-  the one whose test was easier to write.
+- Every implementer prompt and handoff ends with `templates/implementer-block.md` and
+  `templates/blocked.md`.
 - Every implementer prompt and handoff names three stop conditions: two public entry points
   would give different answers for the same inputs; two written rules conflict and no precedence
   settles it; an invariant test would have to be weakened, narrowed, skipped or worked around. In
   system-level work, a change on the breaking list in `commit-sequencing` ("What forces
   expand/contract") is the first.
-- An implementer that meets a stop condition or an open trade-off ends its installment. Its report
-  opens with a `Blocked:` block: the condition, the question, the options with its pick first, the
-  proposed diff, and the commits it made before stopping. It commits green work only, nothing for
-  the blocked step.
+- An implementer that meets a stop condition or an open trade-off ends its installment and reports
+  as `templates/implementer-block.md` and `templates/blocked.md` say.
 - Inside a Workflow a blocked task is terminal; the orchestrator re-dispatches it after the
   answer.
-- Every task reports done, failed, or blocked with its `Blocked:` block, in a form a script can
-  parse. A task that reports nothing probably exhausted its context: split it before retrying.
+- A task with no `Status:` line probably ran out of context: split it before retrying.
 - Each implementer reports its deviations from the plan and its known defects. Before the next
   dispatch, the orchestrator reads them and either carries each into the next prompt or records
   it as a finding.

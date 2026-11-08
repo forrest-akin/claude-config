@@ -38,6 +38,15 @@ bash test/call-budget.test.sh
 bash test/bash-prefix.test.sh
 ```
 
+## Stop conditions
+
+`test/stop-conditions.test.sh` checks that each copy of the three stop conditions from
+`workflow-design` "Executing a plan" keeps every clause word for word.
+
+```bash
+bash test/stop-conditions.test.sh
+```
+
 ## Slidev
 
 The `slidev` skill is upstream's (`slidevjs/slidev`) and is not copied here. Install it into the
