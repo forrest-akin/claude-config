@@ -19,8 +19,9 @@ Run in order; stop at the first that applies.
    state, environment).
 4. Otherwise none: go straight to the plan.
 
-- Resume an existing spike or decision record on the same topic instead of starting a new one. A
-  finished spike is evidence for the later steps.
+- Spikes live in `docs/spikes/`, decision records in `docs/decisions/`, specs in `docs/specs/`,
+  each named `YYYY-MM-DD-<topic>.md` and started from `templates/<kind>.md`. List the
+  directory and resume one on the same topic instead of starting another.
 - If the user skips a recommended spike, proceed and record the unverified assumptions.
 - Unsure between two artifacts: write the smaller.
 - A rewrite of an existing system starts with a probe inventory of that system's defects and
