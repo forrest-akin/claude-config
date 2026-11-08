@@ -69,5 +69,27 @@ class ViewBox(unittest.TestCase):
         self.assertEqual([], viewbox_findings("0,0,800,400"))
 
 
+def palette_findings(inner, palette=audit.PALETTES["default"]):
+    return [i.message for i in svg_issues(inner, palette) if "not in declared palette" in i.message]
+
+
+class Palette(unittest.TestCase):
+    def test_hex_like_ids_in_references_are_not_colours(self):
+        self.assertEqual(palette_findings('<rect fill="url(#abc)"/><use href="#fab"/>'), [])
+
+    def test_eight_digit_hex_is_checked_by_its_colour(self):
+        self.assertEqual(palette_findings('<rect fill="#2563EB80"/>'), [])
+        self.assertNotEqual(palette_findings('<rect fill="#123456AA"/>'), [])
+
+    def test_short_hex_outside_the_palette_is_flagged(self):
+        self.assertEqual(1, len(palette_findings('<rect fill="#123"/>')))
+
+    def test_short_hex_whose_long_form_is_in_the_palette_passes(self):
+        self.assertEqual([], palette_findings('<rect fill="#fff"/>'))
+
+    def test_long_hex_in_the_palette_passes(self):
+        self.assertEqual([], palette_findings('<rect fill="#2563eb"/>'))
+
+
 if __name__ == "__main__":
     unittest.main()

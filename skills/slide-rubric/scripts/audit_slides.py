@@ -210,6 +210,11 @@ def parse_slides(content: str) -> list[dict]:
     return slides
 
 
+def long_hex(color: str) -> str:
+    digits = color[1:].upper()
+    return "#" + (digits[:6] if len(digits) >= 6 else "".join(d * 2 for d in digits))
+
+
 def audit_svgs(slide_idx: int, svgs: list[str], report: AuditReport, palette_colors: set):
     """Audit SVG elements within a slide."""
     for svg_i, svg in enumerate(svgs):
@@ -266,10 +271,9 @@ def audit_svgs(slide_idx: int, svgs: list[str], report: AuditReport, palette_col
                        "marker-end referenced but no <marker> defined in <defs>. Arrows won't render.")
 
         # Check color consistency
-        hex_colors = set(re.findall(r'#[0-9A-Fa-f]{6}\b', svg))
-        hex_colors_upper = {c.upper() for c in hex_colors}
+        hex_colors = set(re.findall(r'(?<!url\()(?<!href=")(?<!href=\')#(?:[0-9A-Fa-f]{8}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})\b', svg))
         palette_upper = {c.upper() for c in palette_colors}
-        off_palette = hex_colors_upper - palette_upper
+        off_palette = {c.upper() for c in hex_colors if long_hex(c) not in palette_upper}
         if off_palette:
             report.add(Severity.INFO, slide_idx, svg_label,
                        f"Colors not in declared palette: {', '.join(sorted(off_palette))}. "
