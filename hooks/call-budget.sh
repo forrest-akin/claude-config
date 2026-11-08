@@ -14,7 +14,8 @@ fi
 
 budget="$(jq -rn 'first(inputs | select(.type == "user")) | .message.content
   | (if type == "string" then . else map(select(.type == "text").text) | join("\n") end)
-  | (capture("About (?<n>[0-9]+) (tool )?calls") // capture("Hard budget: (?<n>[0-9]+)")).n' "$transcript" 2>/dev/null)"
+  | (capture("(budget: *(about |at most )?|about )(?<n>[0-9]+) (tool )?calls"; "i")
+     // capture("hard budget: *(?<n>[0-9]+)"; "i")).n' "$transcript" 2>/dev/null)"
 [ -n "$budget" ] || exit 0
 
 count="$(jq -c 'select(.type == "assistant") | .message.content[]? | select(.type == "tool_use") | 0' "$transcript" | wc -l | tr -d ' ')"

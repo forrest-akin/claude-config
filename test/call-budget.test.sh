@@ -39,6 +39,18 @@ check "text blocks, 10 of 12 says the count" "$(said 10 12)" "$(run "$root/hard1
 transcript "$root/tool44.jsonl" '"About 55 tool calls; report at the budget."' 44
 check "About N tool calls is a budget" "$(said 44 55)" "$(run "$root/tool44.jsonl")"
 
+tab="$(printf '\t')"; k=0
+while IFS="$tab" read -r phrase n; do
+  k=$((k+1)); prompt="$(jq -n --arg p "$phrase" '$p')"
+  if [ -n "$n" ]; then
+    transcript "$root/phrase$k.jsonl" "$prompt" "$n"
+    check "'$phrase' is a budget of $n" "$(said "$n" "$n")" "$(run "$root/phrase$k.jsonl")"
+  else
+    transcript "$root/phrase$k.jsonl" "$prompt" 50
+    check "'$phrase' is no budget" "" "$(run "$root/phrase$k.jsonl")"
+  fi
+done < "$here/fixtures/budget-phrasings.txt"
+
 transcript "$root/none.jsonl" '"No budget here."' 50
 check "no budget says nothing" "" "$(run "$root/none.jsonl")"
 

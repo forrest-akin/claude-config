@@ -1,0 +1,9 @@
+Budget: 30 tool calls	30
+Budget: about 25 tool calls	25
+Hard budget: 12 tool calls	12
+Hard budget: 12	12
+Budget: at most 30 tool calls	30
+About 10 calls	10
+about 55 calls	55
+About 55 tool calls	55
+called about the budget	

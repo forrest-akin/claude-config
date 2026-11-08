@@ -27,7 +27,7 @@ Runs the installer against a fixture repo and a temporary `HOME`.
 (Bash) in `~/.claude/settings.json`, adding each entry once.
 
 - `call-budget.sh` tells an agent its tool-call count when it reaches 80% of the budget its first
-  prompt names (`About N calls`, `Hard budget: N`) and on every call from 100%.
+  prompt names (the phrasings in `test/fixtures/budget-phrasings.txt`) and on every call from 100%.
 - `bash-prefix.sh` denies a Bash command that starts with `NAME=value` or `cd`, quoting
   `CLAUDE.md` "Bash commands".
 
