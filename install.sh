@@ -1,5 +1,6 @@
 #!/bin/bash
-# Symlinks CLAUDE.md, every skills/* and every hooks/*.sh into ~/.claude. Replaces nothing it did not create.
+# Symlinks CLAUDE.md, every skills/* and every hooks/*.sh into ~/.claude. Replaces nothing it did not create,
+# and removes its own links whose target in this repo is missing.
 # Registers call-budget.sh on PostToolUse and bash-prefix.sh on PreToolUse (Bash) in ~/.claude/settings.json, adding each entry once.
 set -u
 repo="$(cd "$(dirname "$0")" && pwd)"
@@ -29,6 +30,11 @@ if [ -e "$settings" ] && ! jq empty "$settings" 2>/dev/null; then
   echo "refusing: $settings is not valid JSON" >&2; bad=1
 fi
 [ "$bad" -eq 0 ] || exit 1
+
+for link in "$dest/CLAUDE.md" "$dest"/skills/* "$dest"/hooks/*.sh; do
+  [ -L "$link" ] && [ ! -e "$link" ] || continue
+  case "$(readlink "$link")" in "$repo"/*) rm "$link"; echo "unlinked $link" ;; esac
+done
 
 for pair in ${pairs[@]+"${pairs[@]}"}; do
   from="${pair%%|*}"; to="${pair##*|}"

@@ -14,6 +14,8 @@ session.
 Symlinks `CLAUDE.md`, each `skills/*` directory and each `hooks/*.sh` into `~/.claude`. Re-running is safe.
 It refuses to replace an existing `~/.claude/CLAUDE.md`, `~/.claude/skills/<name>` or `~/.claude/hooks/<name>.sh`
 that is not its own link, and changes nothing when `~/.claude/settings.json` is not valid JSON.
+Before linking, it removes each of its own links whose target in this repo is missing and prints
+`unlinked <path>`; links elsewhere are left alone.
 
 ```bash
 bash test/install.test.sh

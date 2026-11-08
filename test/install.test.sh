@@ -48,6 +48,14 @@ check "linked settings stays a link" "$real" "$(readlink "$home/.claude/settings
 check "settings with nothing to add is not rewritten" 202001010000 "$(stat -f %Sm -t %Y%m%d%H%M "$real")"
 
 fixture
+run >/dev/null; rm -r "$repo/skills/beta"; ln -s /elsewhere "$home/.claude/skills/foreign"
+check "removed skill exits 0" 0 "$(run)"
+check "removed skill's link removed" no "$([ -L "$home/.claude/skills/beta" ] && echo yes || echo no)"
+check "removed skill's link printed" 1 "$(grep -c -x "unlinked $home/.claude/skills/beta" "$tmp/out")"
+check "dead link outside the repo kept" /elsewhere "$(readlink "$home/.claude/skills/foreign")"
+check "live link left alone" 0 "$(grep -c "alpha" "$tmp/out")"
+
+fixture
 mkdir -p "$home/.claude"; echo '{not json' > "$home/.claude/settings.json"
 check "invalid settings exits non-zero" 1 "$(run)"
 check "invalid settings untouched" '{not json' "$(cat "$home/.claude/settings.json")"
