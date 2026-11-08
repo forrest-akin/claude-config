@@ -105,5 +105,14 @@ class Palette(unittest.TestCase):
         self.assertEqual([], [m for m in messages if "not in declared palette" in m])
 
 
+class Density(unittest.TestCase):
+    def test_code_fence_words_do_not_count(self):
+        code = "\n".join(["word " * 8] * 5)
+        deck = f"---\ntitle: t\n---\n\none two three four five\n\n```python\n{code}\n```\n"
+        report = audit.AuditReport()
+        audit.audit_slides(audit.parse_slides(deck), report, audit.PALETTES["default"])
+        self.assertEqual([], [i.message for i in report.issues if i.category == "Content"])
+
+
 if __name__ == "__main__":
     unittest.main()

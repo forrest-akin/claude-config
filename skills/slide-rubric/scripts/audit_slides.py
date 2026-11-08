@@ -135,6 +135,7 @@ SECONDS_PER_SLIDE = 90
 
 YAML_LINE = re.compile(r'^\s*$|^\s*[\w-]+\s*:|^\s+\S|^\s*-\s')
 COMMENT = re.compile(r'<!--(.*?)-->', re.DOTALL)
+FENCE = re.compile(r'^\s*```.*?^\s*```[^\n]*$', re.DOTALL | re.MULTILINE)
 VIEWBOX = re.compile(r'viewBox=["\']\s*' + r'[\s,]+'.join([r'(-?\d*\.?\d+)'] * 4) + r'\s*["\']')
 
 
@@ -197,7 +198,7 @@ def parse_slides(content: str) -> list[dict]:
         slide["svgs"] = re.findall(r'<svg\b[^>]*>.*?</svg>', body, re.DOTALL)
         slide["has_layout_plan"] = bool(re.search(r'<!--\s*layout plan', body, re.IGNORECASE))
 
-        content_clean = COMMENT.sub("", body)
+        content_clean = FENCE.sub("", COMMENT.sub("", body))
         for svg in slide["svgs"]:
             content_clean = content_clean.replace(svg, "")
         content_clean = re.sub(r'<[^>]+>', ' ', content_clean)
