@@ -122,15 +122,17 @@ KNOWN_LAYOUTS = {
     "iframe", "iframe-left", "iframe-right",
 }
 
-MAX_VIEWBOX_W = 900  # references/slidev-canvas.md
-MAX_VIEWBOX_H = 380
-MAX_ELEMENTS_PER_SVG = 7
-MIN_FONT_SIZE = 14
-MAX_WORDS_PER_SLIDE = 30
-MAX_WORDS_ERROR = 50
-MIN_NOTES_WORDS = 80
-MAX_NOTES_WORDS = 300
-SECONDS_PER_SLIDE = 90
+CONSTANTS = json.loads(Path(__file__).with_name("deck_constants.json").read_text())
+CANVAS = CONSTANTS["canvas"]
+LIMITS = CONSTANTS["thresholds"]
+MAX_ELEMENTS_PER_SVG = LIMITS["elements_warning"]
+MAX_ELEMENTS_ERROR = LIMITS["elements_error"]
+MIN_FONT_SIZE = LIMITS["min_font_size"]
+MAX_WORDS_PER_SLIDE = LIMITS["words_warning"]
+MAX_WORDS_ERROR = LIMITS["words_error"]
+MIN_NOTES_WORDS = LIMITS["notes_words_min"]
+MAX_NOTES_WORDS = LIMITS["notes_words_max"]
+SECONDS_PER_SLIDE = LIMITS["seconds_per_slide"]
 
 
 YAML_LINE = re.compile(r'^\s*$|^\s*[\w-]+\s*:|^\s+\S|^\s*-\s')
@@ -219,6 +221,7 @@ def long_hex(color: str) -> str:
 def audit_svgs(slide: dict, report: AuditReport, palette_colors: set):
     """Audit SVG elements within a slide."""
     slide_idx, svgs = slide["index"], slide["svgs"]
+    canvas = CANVAS.get(slide.get("layout"), CANVAS["default"])
     for svg_i, svg in enumerate(svgs):
         svg_label = f"SVG {svg_i + 1}" if len(svgs) > 1 else "SVG"
 
@@ -229,12 +232,12 @@ def audit_svgs(slide: dict, report: AuditReport, palette_colors: set):
         else:
             vb_w = float(vb_match.group(3))
             vb_h = float(vb_match.group(4))
-            if vb_w > MAX_VIEWBOX_W:
+            if vb_w > canvas["width"]:
                 report.add(Severity.WARNING, slide_idx, svg_label,
-                           f"viewBox width {vb_w:g}px exceeds recommended max {MAX_VIEWBOX_W}px")
-            if vb_h > MAX_VIEWBOX_H:
+                           f"viewBox width {vb_w:g}px exceeds recommended max {canvas['width']}px")
+            if vb_h > canvas["height"]:
                 report.add(Severity.WARNING, slide_idx, svg_label,
-                           f"viewBox height {vb_h:g}px exceeds recommended max {MAX_VIEWBOX_H}px")
+                           f"viewBox height {vb_h:g}px exceeds recommended max {canvas['height']}px")
 
         # Check font sizes
         font_sizes = re.findall(r'font-size=["\']?(\d+(?:\.\d+)?)', svg)
@@ -248,7 +251,7 @@ def audit_svgs(slide: dict, report: AuditReport, palette_colors: set):
         connector_count = sum(len(re.findall(rf'<{tag}\b', drawn)) for tag in ("line", "path", "polyline"))
         total_elements = shape_count + connector_count
 
-        if total_elements > MAX_ELEMENTS_PER_SVG + 3:
+        if total_elements > MAX_ELEMENTS_ERROR:
             report.add(Severity.ERROR, slide_idx, svg_label,
                        f"{total_elements} elements — figure is too complex for a slide. Split into multiple slides.")
         elif total_elements > MAX_ELEMENTS_PER_SVG:

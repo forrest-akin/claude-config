@@ -33,9 +33,10 @@ class PerSlideFrontmatterAndLayoutPlan(unittest.TestCase):
         self.assertEqual([], plan_issues)
 
 
-def svg_issues(inner, palette=audit.PALETTES["default"], viewbox="0 0 800 350"):
+def svg_issues(inner, palette=audit.PALETTES["default"], viewbox="0 0 800 350", layout="default"):
     report = audit.AuditReport()
-    audit.audit_svgs({"index": 1, "svgs": [f'<svg viewBox="{viewbox}">{inner}</svg>']}, report, palette)
+    slide = {"index": 1, "layout": layout, "svgs": [f'<svg viewBox="{viewbox}">{inner}</svg>']}
+    audit.audit_svgs(slide, report, palette)
     return report.issues
 
 
@@ -71,6 +72,19 @@ class ViewBox(unittest.TestCase):
 
     def test_comma_separated_viewbox_is_parsed(self):
         self.assertEqual([], viewbox_findings("0,0,800,400"))
+
+
+def viewbox_limit_findings(viewbox, layout):
+    return [i.message for i in svg_issues("", viewbox=viewbox, layout=layout) if "exceeds" in i.message]
+
+
+class CanvasPerLayout(unittest.TestCase):
+    def test_center_slide_fits_its_taller_canvas(self):
+        self.assertEqual([], viewbox_limit_findings("0 0 850 420", "center"))
+
+    def test_slide_without_layout_uses_the_default_canvas(self):
+        self.assertEqual(["viewBox height 420px exceeds recommended max 380px"],
+                         viewbox_limit_findings("0 0 850 420", None))
 
 
 def palette_findings(inner, palette=audit.PALETTES["default"]):

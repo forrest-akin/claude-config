@@ -1,0 +1,18 @@
+{
+  "canvas": {
+    "default": {"width": 900, "height": 380, "recommended": "0 0 850 350"},
+    "two-cols": {"width": 420, "height": 370, "recommended": "0 0 400 350"},
+    "center": {"width": 900, "height": 450, "recommended": "0 0 850 420"},
+    "full": {"width": 980, "height": 551, "recommended": "0 0 960 530"}
+  },
+  "thresholds": {
+    "min_font_size": 14,
+    "words_warning": 30,
+    "words_error": 50,
+    "elements_warning": 7,
+    "elements_error": 10,
+    "notes_words_min": 80,
+    "notes_words_max": 300,
+    "seconds_per_slide": 90
+  }
+}

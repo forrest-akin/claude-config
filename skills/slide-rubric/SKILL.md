@@ -21,9 +21,11 @@ description: Draws inline SVG figures for Slidev slides and audits a finished sl
 
 ### Canvas Dimensions
 
-Before creating any SVG, determine the available space. Read the reference file for target-specific dimensions:
+Before creating any SVG, determine the available space:
 
-- **Slidev presentations:** See [references/slidev-canvas.md](references/slidev-canvas.md)
+- **Slidev presentations:** the maximum and recommended viewBox per layout are under `canvas` in
+  [`scripts/deck_constants.json`](scripts/deck_constants.json); an unlisted layout uses `default`.
+  For a custom `canvasWidth` and `aspectRatio`, recommend `canvasWidth - 130` by `canvasWidth / aspectRatio - 200`.
 
 Always declare an explicit `viewBox="0 0 W H"` on the `<svg>` element. Never omit the viewBox.
 
@@ -107,4 +109,4 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/audit_slides.py slides.md --timing <minutes>
 
 Fix each finding and rerun until none remain. Per finding, choose the remedy: cut words, split
 the slide, or move content to the speaker notes. Fix a font-size finding with fewer words, never
-a smaller font. viewBox limits per layout are in `references/slidev-canvas.md`.
+a smaller font.
