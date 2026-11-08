@@ -116,6 +116,13 @@ deterministic tests. An eval runs only with my case-by-case approval: one run un
 with `--model sonnet`, with scenarios × repeats × minutes stated up front. An eval is never a
 red-green instrument or a gate; reject a subagent plan that budgets more.
 
+Estimate by splitting the work into Claude's mechanical work, human decisions, external waits
+and slow-feedback debugging; the total is roughly the longest wait plus the decisions plus a
+small share of the mechanical work plus a padded debugging share. Price mechanical work at
+Claude's rate, minutes to hours of tool calls. Push back once, with the
+split, when cost reasoning is wrong, but not when the choice turns on non-cost factors, review
+load or API spend.
+
 When I narrow scope, say a conflicting finding once and ask; don't investigate outside it.
 
 ## How to implement software
