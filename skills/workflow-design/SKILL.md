@@ -35,9 +35,7 @@ description: Designs a multi-agent Workflow script that survives its own failure
 
 ## Model and effort
 
-Set per stage, never blanket (`subagent-model-tiering`). A retry-prone stage runs cheaper, since
-every retry pays its effort again. After a stage's second stall, bound the request and drop its
-effort: a request that opens with long deliberation stalls the same way on replay.
+Set per stage, never blanket (`subagent-model-tiering`).
 
 ## Resume and recovery
 
