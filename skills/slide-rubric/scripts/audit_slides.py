@@ -274,7 +274,7 @@ def audit_svgs(slide_idx: int, svgs: list[str], report: AuditReport, palette_col
         hex_colors = set(re.findall(r'(?<!url\()(?<!href=")(?<!href=\')#(?:[0-9A-Fa-f]{8}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})\b', svg))
         palette_upper = {c.upper() for c in palette_colors}
         off_palette = {c.upper() for c in hex_colors if long_hex(c) not in palette_upper}
-        if off_palette:
+        if palette_colors and off_palette:
             report.add(Severity.INFO, slide_idx, svg_label,
                        f"Colors not in declared palette: {', '.join(sorted(off_palette))}. "
                        f"Consider standardizing.")

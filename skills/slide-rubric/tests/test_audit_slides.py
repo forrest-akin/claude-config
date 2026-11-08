@@ -1,4 +1,8 @@
 import importlib.util
+import json
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -89,6 +93,16 @@ class Palette(unittest.TestCase):
 
     def test_long_hex_in_the_palette_passes(self):
         self.assertEqual([], palette_findings('<rect fill="#2563eb"/>'))
+
+    def test_custom_palette_skips_the_check(self):
+        deck = '---\ntitle: t\n---\n\n<svg viewBox="0 0 800 350"><rect fill="#123456"/></svg>\n'
+        with tempfile.NamedTemporaryFile("w", suffix=".md") as f:
+            f.write(deck)
+            f.flush()
+            out = subprocess.run([sys.executable, str(HERE.parent / "scripts" / "audit_slides.py"), f.name,
+                                  "--palette", "custom", "--json"], capture_output=True, text=True).stdout
+        messages = [i["message"] for i in json.loads(out)["issues"]]
+        self.assertEqual([], [m for m in messages if "not in declared palette" in m])
 
 
 if __name__ == "__main__":
