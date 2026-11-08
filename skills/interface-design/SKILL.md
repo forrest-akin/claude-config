@@ -22,12 +22,14 @@ spikes (`plan-readiness` "Comparative spike") and prototypes supply evidence to 
 4. What fails, who handles it, and is it a value or an exception (`error-modeling`)?
 5. Which rule wins when two collide?
 6. What is frozen for the implementer, and what is theirs to structure?
-7. What in `.claude/noticed.md` or the current code bears on these answers?
+7. What in `.claude/noticed.md`
+   (`${CLAUDE_SKILL_DIR}/../plan-readiness/bin/noticed-scan <draft>`) or the current code bears on
+   these answers?
 
 ## Invariants
 
 - An invariant is a property two entry points or two implementations could disagree on, checkable
-  by one test. The surface sets the count; there is no target.
+  by one test. The surface sets the count.
 - An area is one public surface with one set of invariants: a module's exported interface in the
   small, a protocol or service boundary in the large.
 - Its test generates the cases rather than listing them, and covers every flag an old signature

@@ -75,10 +75,9 @@ The bar: a context-free implementer makes no design choice.
   against what its target holds once the whole plan has landed.
 - The plan drops a constraint the user stated, reframes their goal, or claims something the
   dialogue didn't establish.
-- An entry in `.claude/noticed.md` for a file the plan touches is neither a tidy-first task nor
-  deferred with a reason, or an entry for a file in the directories the plan touches whose count
-  (`git log --since=1.year --oneline -- <path> | wc -l`) is zero is not deleted. The plan orders
-  its tidy-first tasks by that count, highest first.
+- A `touched-file` row of `${CLAUDE_SKILL_DIR}/bin/noticed-scan <plan>` (the `.claude/noticed.md`
+  entries the plan bears on) is neither a tidy-first task nor deferred with a reason, or a `delete`
+  row's entry is not deleted. The plan orders its tidy-first tasks by the row's count, highest first.
 
 **Should fix**
 - No existing file or pattern cited as evidence of research.

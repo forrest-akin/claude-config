@@ -57,6 +57,20 @@ bash test/lint-skills.test.sh
 python3 -m unittest discover -s skills/extension-authoring/tests
 ```
 
+## Skill scripts
+
+`doc-drift`'s `bin/stale-refs` lists facts a diff removed that docs still state.
+`plan-readiness`'s `bin/noticed-scan <plan>` ranks the `.claude/noticed.md` entries a plan must
+dispose of. `slide-rubric`'s `scripts/audit_slides.py` audits a deck, and the
+`disk-space-reclamation` scripts survey, select and apply a deletion plan.
+
+```bash
+python3 -m unittest discover -s skills/doc-drift/tests
+python3 -m unittest discover -s skills/plan-readiness/tests
+python3 -m unittest discover -s skills/slide-rubric/tests
+for t in skills/disk-space-reclamation/tests/*.sh; do bash "$t"; done
+```
+
 ## Slidev
 
 The `slidev` skill is upstream's (`slidevjs/slidev`) and is not copied here. Install it into the
