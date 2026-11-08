@@ -9,11 +9,6 @@ description: Designs a multi-agent Workflow script that survives its own failure
 
 - Agents die from transient API errors, so each extra turn is another chance to die. A restarted
   agent starts over from its prompt and pays for its turns again; files it wrote survive.
-- CLAUDE.md "Subagents" sets the call budgets. Measured 2026-10-26 on a 1M window: 42-64 calls
-  peaked at 102-156K tokens of context, with no deaths. Research agents died at 75-80 calls
-  (2026-09-10).
-- An open-ended agent re-sends its whole context every turn, so its cost grows faster than its
-  turn count. If everything downstream waits on all upstream results, one runaway stalls the run.
 
 ## Prompts
 
@@ -21,8 +16,6 @@ description: Designs a multi-agent Workflow script that survives its own failure
   orchestrator fetches it and passes the result. Agents are for judgment.
 - Every prompt names the cheapest exact source for its facts, a hard call budget, and a
   "return it marked unverified" exit.
-- Split by kind of question, not by instance: many instances of one question over shared inputs
-  go to one agent.
 - Checkpoint: the agent appends results to a file as it goes, reads that file first on start,
   skips what is done, and returns a short summary plus the path. Deliverables are drafted in
   small incremental writes.
@@ -39,7 +32,6 @@ description: Designs a multi-agent Workflow script that survives its own failure
   session, or record the approval in a durable artifact the stage reads.
 - A transition that passes only a stable reference (commit SHA plus a written spec) may chain
   behind a deterministic check. One that passes judgment may not.
-- Dialogue steps stay in the main session; only non-interactive steps are dispatched.
 
 ## Model and effort
 
@@ -107,9 +99,8 @@ effort: a request that opens with long deliberation stalls the same way on repla
   opens with a `Blocked:` block: the condition, the question, the options with its pick first, the
   proposed diff, and the commits it made before stopping. It commits green work only, nothing for
   the blocked step.
-- The main session puts a `Blocked:` question to the human with `AskUserQuestion` and resumes the
-  same agent with `SendMessage`. Inside a Workflow a blocked task is terminal; the orchestrator
-  re-dispatches it after the answer.
+- Inside a Workflow a blocked task is terminal; the orchestrator re-dispatches it after the
+  answer.
 - Every task reports done, failed, or blocked with its `Blocked:` block, in a form a script can
   parse. A task that reports nothing probably exhausted its context: split it before retrying.
 - Each implementer reports its deviations from the plan and its known defects. Before the next
@@ -129,10 +120,9 @@ effort: a request that opens with long deliberation stalls the same way on repla
 
 ## Launch and monitor
 
-- The launch summary states the batching, each stage's model and effort, agent count and token
-  estimate, and flags a run past the large-workflow line. An opus agent at xhigh cost about 155K
-  tokens (2026-09-10); sonnet or low effort costs a fraction. The user's usage limit is shared
-  with their other work.
+- The launch summary states each stage's model and effort, agent count and token estimate, and
+  flags a run past the large-workflow line (per-agent token costs: `references/platform.md`
+  "Measured budgets"). The user's usage limit is shared with their other work.
 - Monitor from launch. Poll about once a minute and heartbeat only when an agent passes its call
   budget, ~20 minutes pass with agents running but no new result, or an agent transcript ends in
   a user interrupt. An agent finishing is not a trigger: the Workflow's completion notification
@@ -140,36 +130,5 @@ effort: a request that opens with long deliberation stalls the same way on repla
   from the watcher's notifications. On any heartbeat, read the transcript tail, then stop and
   relaunch with a tighter prompt, or harvest.
 
-## Platform facts
-
-Docs read 2026-10-25 against Claude Code 2.1.310:
-[workflows](https://code.claude.com/docs/en/workflows.md),
-[env-vars](https://code.claude.com/docs/en/env-vars.md),
-[errors](https://code.claude.com/docs/en/errors.md),
-[sub-agents](https://code.claude.com/docs/en/sub-agents.md).
-
-- Relaunch returns each completed agent's saved result until the first agent whose prompt
-  differs; that agent and every agent started after it run again. A failed agent reruns, and so
-  does every agent started after it, even completed ones. Before v2.1.305, completed agents in
-  `pipeline()`/`parallel()` items that ran several agents each could also rerun.
-- A run resumes in the same session, a backgrounded one, or one reopened with `claude --resume`;
-  a fresh session starts it over.
-- Stall: no output for the agent's `stallMs`, else `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS`
-  (default 10 minutes; covers workflow agents from v2.1.286). Time waiting on its own tool calls
-  doesn't count. A stalled agent restarts at most five times without its old transcript, then
-  `agent()` fails: inside `parallel()`/`pipeline()` the result is `null`, awaited directly the run
-  ends. `agent lost its reply on all 6 attempts` is the stream idle watchdog
-  (`CLAUDE_STREAM_IDLE_TIMEOUT_MS`); a longer `stallMs` doesn't help.
-- `API Error: No response from API` is the first-byte deadline
-  (`CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS`, v2.1.242+), not a network fault.
-- Usage limit (v2.1.271+): the run pauses for the reset only in an interactive claude.ai
-  subscription session with `autoContinueAtUsageLimit` on, a reset within 24 hours, and at most
-  two waits per run. Anywhere else the agent fails.
-- The `Large workflow` warning fires past 25 scheduled agents or 1.5M projected tokens. Up to 16
-  agents run concurrently by default; 1,000 agents per run.
-- A run's `journal.jsonl` (`<session>/subagents/workflows/wf_<id>/`) holds only `launched`,
-  `started` and `result` records; no `agent_complete`, `agent_fail` or `workflow_complete` event
-  exists to filter on. Observed 2026-11-01 on 2.1.316 across 50 journals.
-- Workflow agents get no mid-run user input, and subagents have no `AskUserQuestion`. Subagents
-  nest at most three layers below the main session by default
-  (`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`).
+Platform facts (journal format, resume, limits) are in `references/platform.md`. Read it when a
+run stalls, fails or is resumed.
