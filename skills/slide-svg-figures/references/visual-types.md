@@ -6,7 +6,7 @@ Ask: "What is the ONE thing this figure communicates?" Then match to a type:
 
 | Message pattern | Visual type | Max elements |
 |----------------|-------------|-------------|
-| "A leads to B leads to C" | Horizontal flow | 5 boxes + 4 arrows |
+| "A leads to B leads to C" | Horizontal flow | 4 boxes + 3 arrows |
 | "A vs B" or "before/after" | Side-by-side comparison | 2 panels |
 | "These N things are related" | Grouped boxes | 6 boxes |
 | "This is bigger/more important than that" | Scale or bar | 3-5 items |

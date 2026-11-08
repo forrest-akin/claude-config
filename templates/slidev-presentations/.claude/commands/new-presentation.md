@@ -24,6 +24,9 @@ Then:
        "dev": "slidev slides.md",
        "build": "slidev build slides.md",
        "export": "slidev export slides.md --format pdf"
+     },
+     "devDependencies": {
+       "playwright-chromium": "^1.49.0"
      }
    }
    ```
