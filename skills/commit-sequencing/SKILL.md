@@ -31,7 +31,9 @@ and its contract, a refactor and a behavior change, or more than one behavior in
 - Estimate each commit's changed lines (code, tests and docs) and re-cut any past about 300 at a
   seam where each part deploys alone; a preparatory refactor usually makes one. When no cut lets
   each part deploy alone, keep one commit and say why in the plan: deploying alone outranks the size
-  and behavior rules above.
+  and behavior rules above. In check mode, `${CLAUDE_SKILL_DIR}/bin/stack-check BASE` applies
+  these sizes and the red flags below to an existing stack; it counts lines under `.claude/` in
+  their own column and leaves them out of the size flag.
 - Red flags: a placeholder message (WIP, temp, part N); code unreachable after its commit.
 
 ## What forces expand/contract
