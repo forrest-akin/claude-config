@@ -47,6 +47,7 @@ inside the VM does not shrink the host file.
 - [`references/runbook.md`](references/runbook.md) — read before the first survey:
   the ordered procedure, the survey→decide→apply loop, and macOS traps (BSD
   `xargs` has no `-d`, `pgrep` can miss live processes, `stat -f %m`).
-- `lib/select.sh` — pure classification logic; `tests/test-select.sh` covers it.
+- `lib/select.sh` — pure classification logic. `tests/` covers it and the guards in
+  `reclaim-apply.sh` and `protect-list.sh`.
   Both the live-session guard and the source-directory guard exist because a real
   scan nearly deleted something it should not have. Keep the tests green.
