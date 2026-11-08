@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+"""Lists reasons a skill or subagent would load wrong or not at all.
+
+Usage: lint-extension <path>   (a skills or agents dir, one skill dir, or one file)
+Prints `<file>:<line>: <reason>` per finding and exits 1 on any finding.
+YAML validity is left to `claude plugin validate`.
+
+Platform facts, read 2026-11-07:
+  https://code.claude.com/docs/en/skills.md "Frontmatter reference": the skill keys below; the
+    combined description and when_to_use cap of 1,536 characters; a missing description falls
+    back to the first non-empty body line.
+  https://code.claude.com/docs/en/sub-agents.md "Frontmatter reference": the agent keys
+    below, `name` and `description` required.
+"""
+import os
+import re
+import sys
+
+KEY = re.compile(r"^([A-Za-z_][\w-]*)\s*:(.*)$")
+LISTING_CAP = 1536
+SKILL_KEYS = {"name", "description", "when_to_use", "argument-hint", "arguments", "disable-model-invocation",
+              "user-invocable", "allowed-tools", "disallowed-tools", "model", "effort", "context", "agent",
+              "background", "hooks", "paths", "shell", "metadata", "license", "compatibility"}
+AGENT_KEYS = {"name", "description", "tools", "disallowedTools", "model", "permissionMode", "maxTurns",
+              "autoCompactWindow", "skills", "mcpServers", "hooks", "memory", "background", "omitClaudeMd",
+              "effort", "isolation", "color", "initialPrompt", "experimental"}
+
+
+def targets(path):
+    if os.path.isfile(path):
+        return [path]
+    if os.path.isfile(os.path.join(path, "SKILL.md")):
+        return [os.path.join(path, "SKILL.md")]
+    found = []
+    for entry in sorted(os.listdir(path)):
+        skill = os.path.join(path, entry, "SKILL.md")
+        if os.path.isfile(skill):
+            found.append(skill)
+        elif entry.endswith(".md"):
+            found.append(os.path.join(path, entry))
+    return found
+
+
+def frontmatter(lines):
+    """Top-level keys as {key: (line, value)}; None when --- is not the first line."""
+    if not lines or lines[0].rstrip() != "---":
+        return None
+    keys, key = {}, None
+    for n, line in enumerate(lines[1:], start=2):
+        if line.rstrip() == "---":
+            break
+        m = KEY.match(line)
+        if m:
+            key = m.group(1)
+            keys[key] = (n, m.group(2).strip())
+        elif key and line.strip() and not line.startswith("#"):
+            n0, value = keys[key]
+            keys[key] = (n0, (value + " " + line.strip()).strip())
+    return keys
+
+
+def lint(path, text):
+    keys = frontmatter(text.splitlines())
+    if keys is None:
+        return [(1, "frontmatter is read only when --- is the first line")]
+    agent = os.path.basename(path) != "SKILL.md"
+    findings = []
+    if agent:
+        findings += [(1, f"agent is skipped without `{k}`") for k in ("name", "description") if k not in keys]
+    elif "description" not in keys:
+        findings.append((1, "no `description`: the skill triggers on its first body line"))
+    known, kind, style = (AGENT_KEYS, "agent", "camelCase") if agent else (SKILL_KEYS, "skill", "hyphenated")
+    findings += [(line, f"unknown {kind} key `{k}` is ignored; {kind} keys are {style}")
+                 for k, (line, _) in keys.items() if k not in known]
+    if "description" in keys:
+        findings += description_findings(keys)
+    return findings
+
+
+def description_findings(keys):
+    line, description = keys["description"]
+    trigger = description + keys.get("when_to_use", (0, ""))[1]
+    findings = []
+    if len(trigger) > LISTING_CAP:
+        findings.append((line, f"description + when_to_use is {len(trigger):,} characters; the listing cuts at 1,536"))
+    if trigger.count("Use when") != 1:
+        findings.append((line, f'description has {trigger.count("Use when")} "Use when" clauses; write one'))
+    if trigger.count("Not for") > 1:
+        findings.append((line, f'description has {trigger.count("Not for")} "Not for" clauses; '
+                               "name only the neighbour that should win"))
+    return findings
+
+
+def main(argv):
+    if len(argv) != 2:
+        print("usage: lint-extension <path>", file=sys.stderr)
+        return 2
+    findings = []
+    try:
+        files = targets(argv[1])
+        if not files:
+            findings.append(f"{os.path.normpath(argv[1])}: no SKILL.md or agent file found")
+        for f in files:
+            try:
+                with open(f, encoding="utf-8") as fh:
+                    text = fh.read()
+            except UnicodeDecodeError:
+                findings.append(f"{os.path.normpath(f)}: cannot read: not UTF-8")
+                continue
+            findings += [f"{os.path.normpath(f)}:{line}: {reason}" for line, reason in lint(f, text)]
+    except OSError as e:
+        findings.append(f"{os.path.normpath(e.filename)}: cannot read: {e.strerror}")
+    for finding in findings:
+        print(finding)
+    return 1 if findings else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

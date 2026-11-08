@@ -62,7 +62,8 @@ live examples in a supporting file, which Claude reads unprocessed.
 
 ## Silent failures
 
-When an extension does not load or fire, read `references/platform.md`.
+When an extension does not load or fire, run `${CLAUDE_SKILL_DIR}/bin/lint-extension <path>` (a
+skills or agents dir, or one file). If it passes, read `references/platform.md`.
 
 ## Where a lesson lives
 

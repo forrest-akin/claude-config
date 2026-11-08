@@ -47,6 +47,16 @@ bash test/bash-prefix.test.sh
 bash test/stop-conditions.test.sh
 ```
 
+## Extension lint
+
+`test/lint-skills.test.sh` runs `extension-authoring`'s `bin/lint-extension` over `skills/` and
+fails on any finding.
+
+```bash
+bash test/lint-skills.test.sh
+python3 -m unittest discover -s skills/extension-authoring/tests
+```
+
 ## Slidev
 
 The `slidev` skill is upstream's (`slidevjs/slidev`) and is not copied here. Install it into the
