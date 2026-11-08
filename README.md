@@ -13,7 +13,7 @@ session.
 
 Symlinks `CLAUDE.md`, each `skills/*` directory and each `hooks/*.sh` into `~/.claude`. Re-running is safe.
 It refuses to replace an existing `~/.claude/CLAUDE.md`, `~/.claude/skills/<name>` or `~/.claude/hooks/<name>.sh`
-that is not its own link.
+that is not its own link, and changes nothing when `~/.claude/settings.json` is not valid JSON.
 
 ```bash
 bash test/install.test.sh
@@ -23,20 +23,8 @@ Runs the installer against a fixture repo and a temporary `HOME`.
 
 ## Hooks
 
-A linked hook runs once registered in `~/.claude/settings.json`:
-
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      { "matcher": "", "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/call-budget.sh" }] }
-    ],
-    "PreToolUse": [
-      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "$HOME/.claude/hooks/bash-prefix.sh" }] }
-    ]
-  }
-}
-```
+`install.sh` registers `call-budget.sh` on PostToolUse and `bash-prefix.sh` on PreToolUse
+(Bash) in `~/.claude/settings.json`, adding each entry once.
 
 - `call-budget.sh` tells an agent its tool-call count when it reaches 80% of the budget its first
   prompt names (`About N calls`, `Hard budget: N`) and on every call from 100%.
