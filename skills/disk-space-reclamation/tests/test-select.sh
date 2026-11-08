@@ -158,5 +158,14 @@ check "project's own build dir is not dependency content" \
 check "a path merely containing the word is not a match" \
   "no" "$(in_dep /r/my-node_modules-notes/build)"
 
+TREE="$(mktemp -d)"
+mkdir -p "$TREE/app/build/sub/build" "$TREE/app/node_modules/dep/build" "$TREE/lib/dist"
+check "regenerable_dirs finds the outermost build dirs outside node_modules" \
+  "$TREE/app/build" "$(regenerable_dirs "$TREE" 7 build)"
+check "regenerable_dirs node_modules is the outermost node_modules" \
+  "$TREE/app/node_modules" "$(regenerable_dirs "$TREE" 7 node_modules)"
+check "regenerable_dirs stops at the depth" "" "$(regenerable_dirs "$TREE" 1 build)"
+rm -rf "$TREE"
+
 printf '\n%d passed, %d failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

@@ -64,23 +64,6 @@ if ! "$HERE/protect-list.sh" "${protect_args[@]}" > "$PROTECT"; then
 fi
 echo "reclaim-plan: protecting $(wc -l < "$PROTECT" | tr -d ' ') path(s) from live sessions" >&2
 
-# find_candidates PATTERN
-#   For every pattern except node_modules itself, node_modules subtrees are
-#   PRUNED rather than searched. A `build/` or `dist/` inside node_modules is a
-#   dependency's own shipped output, not project build output — and pruning also
-#   avoids walking tens of thousands of nested directories, which dominated the
-#   scan time before.
-find_candidates() {
-  local pat="$1"
-  if [ "$pat" = "node_modules" ]; then
-    find "$ROOT" -maxdepth "$DEPTH" -type d -name "$pat" -prune 2>/dev/null
-  else
-    find "$ROOT" -maxdepth "$DEPTH" \
-      -type d -name node_modules -prune -o \
-      -type d -name "$pat" -prune -print 2>/dev/null
-  fi
-}
-
 NOW="$(date +%s)"
 del_kb=0; keep_kb=0; del_n=0; keep_n=0
 
@@ -90,7 +73,7 @@ for pat in $PATTERNS; do
   while IFS= read -r d; do
     [ -n "$d" ] || continue
 
-    # Belt and braces alongside the prune in find_candidates: never plan
+    # Belt and braces alongside the prune in regenerable_dirs: never plan
     # anything inside an installed dependency tree, whatever the traversal did.
     if in_dependency_tree "$d"; then
       continue
@@ -131,7 +114,7 @@ for pat in $PATTERNS; do
     else
       keep_kb=$((keep_kb + ${size_kb:-0})); keep_n=$((keep_n + 1))
     fi
-  done < <(find_candidates "$pat")
+  done < <(regenerable_dirs "$ROOT" "$DEPTH" "$pat")
 done
 
 {

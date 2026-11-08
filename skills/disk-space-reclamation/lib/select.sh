@@ -99,3 +99,15 @@ classify() {
 
   printf 'delete|stale\n'
 }
+
+# regenerable_dirs ROOT DEPTH PATTERN — the outermost directories named PATTERN under ROOT.
+# node_modules is pruned for every other pattern: a dependency's build/ or dist/ is its shipped
+# output, not project build output, and walking it dominated scan time.
+regenerable_dirs() {
+  if [ "$3" = node_modules ]; then
+    find "$1" -maxdepth "$2" -type d -name node_modules -prune 2>/dev/null
+  else
+    find "$1" -maxdepth "$2" -type d -name node_modules -prune -o \
+      -type d -name "$3" -prune -print 2>/dev/null
+  fi
+}

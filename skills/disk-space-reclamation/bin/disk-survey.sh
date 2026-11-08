@@ -8,6 +8,7 @@
 set -uo pipefail
 
 ROOT="${1:-$HOME}"
+. "$(dirname "$0")/../lib/select.sh"
 
 hr() { printf '\n\033[1m%s\033[0m\n' "$1"; }
 
@@ -27,15 +28,16 @@ hr "TOP CONSUMERS UNDER $ROOT"
 du -shx "$ROOT"/* "$ROOT"/.[a-zA-Z]* 2>/dev/null | sort -rh | head -25
 
 hr "REGENERABLE BUILD ARTIFACTS (per-project, safe to plan)"
+
 printf '%-16s %10s  %s\n' PATTERN SIZE DIRS
 for pat in node_modules target build dist .next out __pycache__ .pytest_cache; do
-  # -prune stops descent, so nested matches are not double-counted within a
-  # pattern. Patterns can still overlap each other (a dist/ inside a
-  # node_modules/), so treat the column as indicative, not additive.
-  tot=$(find "$ROOT" -maxdepth 7 -type d -name "$pat" -prune 2>/dev/null -exec du -sk {} + 2>/dev/null \
-        | awk '{s+=$1} END{printf "%.1fG", s/1048576}')
-  cnt=$(find "$ROOT" -maxdepth 7 -type d -name "$pat" -prune 2>/dev/null | wc -l | tr -d ' ')
-  printf '%-16s %10s  %s\n' "$pat" "${tot:-0G}" "$cnt"
+  tot=0; cnt=0
+  while IFS= read -r d; do
+    kb=$(du -sk "$d" 2>/dev/null | cut -f1)
+    tot=$((tot + ${kb:-0})); cnt=$((cnt+1))
+  done < <(regenerable_dirs "$ROOT" 7 "$pat")
+  gb=$(awk -v k="$tot" 'BEGIN{printf "%.1fG", k/1048576}')
+  printf '%-16s %10s  %s\n' "$pat" "$gb" "$cnt"
 done
 
 hr "SHARED CACHES (global — never auto-planned, see runbook)"
