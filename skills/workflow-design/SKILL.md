@@ -38,7 +38,7 @@ Set per stage, never blanket (`subagent-model-tiering`).
 - A hand-rolled pool that starts agents as others finish orders them by completion time and
   breaks replay.
 - Give work items stable IDs at birth and dedupe by ID. Duplication on resume is silent and shows
-  only as spend, so count result records per item.
+  only as spend; `bin/wf-status` counts result records per label.
 - Recover an interrupted fan-out by harvest, not replay: read the finished results as data,
   write a new script over only the unfinished items, merge at synthesis. Copy finished results
   somewhere durable first; temp directories get purged.
@@ -106,12 +106,10 @@ Set per stage, never blanket (`subagent-model-tiering`).
 - The launch summary states each stage's model and effort, agent count and token estimate, and
   flags a run past the large-workflow line (per-agent token costs: `references/platform.md`
   "Measured budgets"). The user's usage limit is shared with their other work.
-- Monitor from launch. Poll about once a minute and heartbeat only when an agent passes its call
-  budget, ~20 minutes pass with agents running but no new result, or an agent transcript ends in
-  a user interrupt. An agent finishing is not a trigger: the Workflow's completion notification
-  returns the results. Count each agent's calls from the `tool_use` blocks in its transcript, not
-  from the watcher's notifications. On any heartbeat, read the transcript tail, then stop and
-  relaunch with a tighter prompt, or harvest.
+- Monitor from launch: `Monitor` runs `until ! ${CLAUDE_SKILL_DIR}/bin/wf-status <wf_id>; do sleep
+  60; done`, which ends when an agent is over budget, idle or interrupted; the Workflow's
+  completion notification returns finished results. On exit, read the transcript tail, then stop
+  and relaunch with a tighter prompt, or harvest.
 
 Platform facts (journal format, resume, limits) are in `references/platform.md`. Read it when a
 run stalls, fails or is resumed.

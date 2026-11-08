@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+"""Reports each agent of a Workflow run, and exits 1 when a heartbeat condition holds.
+
+Usage: wf-status <workflow dir | wf_<id>>
+A wf_<id> resolves to ~/.claude/projects/*/*/subagents/workflows/wf_<id>/.
+Prints TSV `label budget calls idle interrupted results`: budget from the agent's first prompt
+(the phrasings in test/fixtures/budget-phrasings.txt), tool_use blocks in its transcript, minutes
+since its last record (`-` columns before its transcript exists), whether the transcript ends in a user interrupt, and result records for
+its label in journal.jsonl.
+"""
+import datetime
+import glob
+import json
+import os
+import re
+import sys
+import time
+
+STALL_MINUTES = 20
+BUDGET = re.compile(r"(?:budget: *(?:about |at most )?|about )([0-9]+) (?:tool )?calls", re.I)
+HARD_BUDGET = re.compile(r"hard budget: *([0-9]+)", re.I)
+
+
+def read_jsonl(path):
+    records = []
+    with open(path, encoding="utf-8") as f:
+        for n, line in enumerate(f, 1):
+            try:
+                records.append(json.loads(line))
+            except json.JSONDecodeError:
+                print(f"skipped line {n} of {path}", file=sys.stderr)
+    return records
+
+
+def text_of(message):
+    content = message.get("content", "")
+    if isinstance(content, str):
+        return content
+    return "\n".join(block.get("text", "") for block in content if block.get("type") == "text")
+
+
+def budget(text):
+    match = BUDGET.search(text) or HARD_BUDGET.search(text)
+    return int(match.group(1)) if match else None
+
+
+def minutes_since(stamp, now):
+    then = datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    return int((now - then.timestamp()) // 60)
+
+
+def agent_row(records, now):
+    first_user = next(r for r in records if r.get("type") == "user")
+    calls = sum(1 for r in records if r.get("type") == "assistant"
+                for block in r["message"].get("content", []) if block.get("type") == "tool_use")
+    return {"budget": budget(text_of(first_user["message"])), "calls": calls,
+            "idle": minutes_since(records[-1]["timestamp"], now),
+            "interrupted": records[-1].get("type") == "user"
+            and "[Request interrupted by user" in text_of(records[-1]["message"])}
+
+
+def resolve(arg):
+    if os.path.isdir(arg):
+        return arg, None
+    matches = glob.glob(os.path.expanduser(f"~/.claude/projects/*/*/subagents/workflows/{arg}/"))
+    if len(matches) != 1:
+        return None, f"{len(matches)} runs match {arg}"
+    return matches[0].rstrip("/"), None
+
+
+def main(argv):
+    if len(argv) != 2:
+        print("usage: wf-status <workflow dir | wf_<id>>", file=sys.stderr)
+        return 2
+    run_dir, error = resolve(argv[1])
+    if error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+    now = time.time()
+    journal_path = os.path.join(run_dir, "journal.jsonl")
+    if not os.path.isfile(journal_path):
+        print(f"error: no journal.jsonl at {journal_path}", file=sys.stderr)
+        return 2
+    journal = read_jsonl(journal_path)
+    labels = {r["agentId"]: r["label"] for r in journal if r.get("type") == "started"}
+    results = {}
+    for r in journal:
+        if r.get("type") == "result":
+            label = labels.get(r["agentId"])
+            results[label] = results.get(label, 0) + 1
+    running = set(labels) - {r["agentId"] for r in journal if r.get("type") == "result"}
+    rows = {}
+    for agent_id in labels:
+        path = os.path.join(run_dir, f"agent-{agent_id}.jsonl")
+        records = read_jsonl(path) if os.path.isfile(path) else []
+        rows[agent_id] = agent_row(records, now) if records else None
+    finished = [rows[a]["idle"] for a in set(labels) - running if rows[a]]
+    since_result = min(finished) if finished else (now - os.path.getmtime(journal_path)) // 60
+    heartbeat = bool(running) and since_result >= STALL_MINUTES
+    print("label\tbudget\tcalls\tidle\tinterrupted\tresults")
+    for agent_id, label in labels.items():
+        row = rows[agent_id]
+        if row is None:
+            print(f"{label}\t-\t-\t-\t-\t{results.get(label, 0)}")
+            continue
+        heartbeat |= row["interrupted"] or (row["budget"] is not None and row["calls"] > row["budget"])
+        interrupted = "yes" if row["interrupted"] else "no"
+        print(f"{label}\t{row['budget'] or '-'}\t{row['calls']}\t{row['idle']}\t{interrupted}\t{results.get(label, 0)}")
+    return 1 if heartbeat else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
