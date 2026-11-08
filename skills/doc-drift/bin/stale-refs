@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""Lists facts a diff removed that docs and config still state.
+
+Usage: stale-refs [BASE]   (BASE defaults to HEAD: the working tree against the last commit)
+Prints TSV `token class doc:line last-edited`. Counts ("five skills") are not detected.
+"""
+import re
+import subprocess
+import sys
+
+DOC_SUFFIXES = (".md", ".yml", ".yaml", ".json", ".toml")
+CLASSES = [
+    ("env", re.compile(r"\b[A-Z][A-Z0-9]*_[A-Z0-9_]+\b")),
+    ("name", re.compile(r"\b[a-z]+[A-Z]\w*\b")),
+    ("version", re.compile(r"\b\d+\.\d+(?:\.\d+)*\b")),
+]
+
+
+def git(*args):
+    return subprocess.run(["git", *args], capture_output=True, text=True, check=True).stdout
+
+
+def changed_lines(diff, sign):
+    return [line[1:] for line in diff.splitlines() if line.startswith(sign) and not line.startswith(sign * 3)]
+
+
+def facts(lines):
+    found = {}
+    for line in lines:
+        for cls, pattern in CLASSES:
+            for token in pattern.findall(line):
+                found.setdefault(token, cls)
+    return found
+
+
+def is_doc(path):
+    return path.endswith(DOC_SUFFIXES) or path.rsplit("/", 1)[-1].upper().startswith("README")
+
+
+def read_lines(path):
+    with open(path, encoding="utf-8") as f:
+        return f.read().splitlines()
+
+
+def last_edited(path):
+    return git("log", "-1", "--format=%cs", "--", path).strip() or "-"
+
+
+def usage_error(base):
+    def fails(*args):
+        return subprocess.run(["git", *args], capture_output=True).returncode != 0
+    if fails("rev-parse", "--show-toplevel"):
+        return "not a git repository"
+    if fails("rev-parse", "--verify", "--quiet", base + "^{commit}"):
+        return f"unknown BASE {base}"
+    return None
+
+
+def main(argv):
+    base = argv[1] if len(argv) > 1 else "HEAD"
+    error = usage_error(base)
+    if error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+    texts, unread = {}, []
+    deleted = set(git("ls-files", "--deleted").splitlines())
+    for path in (p for p in git("ls-files").splitlines() if p not in deleted):
+        try:
+            texts[path] = read_lines(path)
+        except (OSError, UnicodeDecodeError):
+            unread.append(path)
+    diff = git("diff", "-U0", base, "--", *(f":(exclude,literal){path}" for path in unread))
+    added = facts(changed_lines(diff, "+"))
+    found = {token: cls for token, cls in facts(changed_lines(diff, "-")).items() if token not in added}
+    docs = sorted(path for path in texts if is_doc(path))
+    code = [path for path in texts if not is_doc(path)]
+    for token, cls in found.items():
+        if any(token in line for path in code for line in texts[path]):
+            continue
+        for doc in docs:
+            for n, line in enumerate(texts[doc], 1):
+                if token in line:
+                    print(f"{token}\t{cls}\t{doc}:{n}\t{last_edited(doc)}")
+    if unread:
+        print("unread:", *unread, sep="\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

@@ -7,9 +7,9 @@ description: Finds the docs and config a change made wrong, or sweeps a whole re
 
 ## Scope
 
-- **Change-based**: list the facts the diff touches (names, paths, endpoints, environment
-  variables, flags, versions, counts), then search the repo's docs and config for other statements
-  of them. Drift outside the diff is context, not a finding.
+- **Change-based**: run `${CLAUDE_SKILL_DIR}/bin/stale-refs [BASE]` (default `HEAD`, the
+  uncommitted change). It lists each name, environment variable or version the diff removed that
+  docs and config still state; check counts by hand. Drift outside the diff is not a finding.
 - **Full**: inventory the docs and the fact-carrying config, then cross-check them.
 
 ## Which side wins
@@ -17,7 +17,8 @@ description: Finds the docs and config a change made wrong, or sweeps a whole re
 - **Countable facts**: the filesystem.
 - **Facts the code defines** (endpoints, environment variables, signatures, flags, dependency
   versions): the code.
-- **Declared facts** (version numbers, feature descriptions): the most recently edited doc.
+- **Declared facts** (version numbers, feature descriptions): the most recently edited doc
+  (`stale-refs` prints each doc's date).
 
 Each fix names the winning side and the rule that decided it. When the winner is ambiguous,
 propose the fix instead of applying it.
@@ -29,4 +30,4 @@ propose the fix instead of applying it.
 - Rank by whether a reader would act wrongly. Highest: a documented endpoint or variable that no
   longer exists, or a version mismatch across manifests. Middle: a count slightly off, a list
   missing a new item. Lowest: a stale comment.
-- Never skip a file silently; report anything that couldn't be read.
+- Report every file `stale-refs` lists under `unread:`.
