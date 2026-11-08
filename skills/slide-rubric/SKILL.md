@@ -54,21 +54,9 @@ Before writing ANY SVG markup, write a layout plan as an HTML comment. This is t
 
 ### Color Palette
 
-Use these colors consistently across all figures in a deck. Read [references/color-palettes.md](references/color-palettes.md) for the full palette options.
-
-#### Default Palette
-
-| Role | Hex | Usage |
-|------|-----|-------|
-| Primary | `#2563EB` | Main elements, key concepts |
-| Accent | `#F59E0B` | Highlighted/emphasized elements |
-| Danger | `#EF4444` | Negative, warning, anti-pattern |
-| Success | `#10B981` | Positive, correct, pro-pattern |
-| Neutral fill | `#F3F4F6` | Background shapes, secondary elements |
-| Text on dark | `#FFFFFF` | Text inside Primary/Accent/Danger/Success fills |
-| Text on light | `#1F2937` | Text inside Neutral fills or standalone |
-| Borders | `#E5E7EB` | Shape outlines |
-| Arrows/connectors | `#6B7280` | Lines and arrows |
+Use one palette across all figures in a deck. Fill by role from the palette in
+`scripts/deck_constants.json`. Read [references/color-palettes.md](references/color-palettes.md)
+for contrast and for mapping brand colours to roles.
 
 ### Visual Type Reference
 
@@ -83,7 +71,7 @@ Choose the right visual type for the message. See [references/visual-types.md](r
 | Elements crowd edges | No margin from viewBox border | Pull elements in from the border |
 | Arrows cross through boxes | Complex layout with crossing paths | Simplify to linear flow, or use curved paths that route around elements |
 | Inconsistent sizing | Boxes have different dimensions | Use uniform box sizes unless size encodes meaning |
-| Too many colors | Every element has a different fill | Max 3 fill colors per figure + neutral |
+| Too many colors | Every element has a different fill | Fill by role from the palette |
 
 #### v-click Integration
 

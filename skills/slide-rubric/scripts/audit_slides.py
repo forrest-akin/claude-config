@@ -6,7 +6,7 @@ Checks SVG dimensions, font sizes, element counts, color consistency,
 slide word counts, speaker notes presence/length, and structural integrity.
 
 Usage:
-    python3 audit_slides.py <path_to_slides.md> [--palette default|mono|warm|custom]
+    python3 audit_slides.py <path_to_slides.md> [--palette <name in deck_constants.json>|custom]
     python3 audit_slides.py slides.md --palette default --timing 15
 """
 
@@ -95,25 +95,6 @@ class AuditReport:
         print("=" * 70 + "\n")
 
 
-# Default color palette
-PALETTES = {
-    "default": {
-        "#2563EB", "#F59E0B", "#EF4444", "#10B981",
-        "#F3F4F6", "#FFFFFF", "#1F2937", "#E5E7EB", "#6B7280",
-        # Common tints/shades that are acceptable
-        "#FEF2F2", "#FECACA", "#F0FDF4", "#BBF7D0",
-        "#EFF6FF", "#BFDBFE", "#FEF3C7", "#FDE68A",
-    },
-    "mono": {
-        "#1E293B", "#475569", "#94A3B8", "#F1F5F9",
-        "#FFFFFF", "#CBD5E1", "#64748B",
-    },
-    "warm": {
-        "#7C3AED", "#F97316", "#DC2626", "#059669",
-        "#FAF5FF", "#FFFFFF", "#1F2937", "#E9D5FF", "#6B7280",
-    },
-}
-
 KNOWN_LAYOUTS = {
     "default", "center", "cover", "end", "full", "none",
     "intro", "quote", "section", "statement", "fact",
@@ -125,6 +106,7 @@ KNOWN_LAYOUTS = {
 CONSTANTS = json.loads(Path(__file__).with_name("deck_constants.json").read_text())
 CANVAS = CONSTANTS["canvas"]
 LIMITS = CONSTANTS["thresholds"]
+PALETTES = {name: set(roles.values()) for name, roles in CONSTANTS["palettes"].items()}
 MAX_ELEMENTS_PER_SVG = LIMITS["elements_warning"]
 MAX_ELEMENTS_ERROR = LIMITS["elements_error"]
 MIN_FONT_SIZE = LIMITS["min_font_size"]
@@ -288,7 +270,7 @@ def audit_svgs(slide: dict, report: AuditReport, palette_colors: set):
         text_contents = re.findall(r'>([^<]{20,})<', svg)
         for tc in text_contents:
             words = tc.strip().split()
-            if len(words) > 6:
+            if len(words) > LIMITS["svg_text_words"]:
                 report.add(Severity.WARNING, slide_idx, svg_label,
                            f"Text block with {len(words)} words inside SVG element: "
                            f"'{' '.join(words[:6])}...' — max 3 words/line, 2 lines recommended")
@@ -365,7 +347,7 @@ def audit_slides(slides: list[dict], report: AuditReport, palette_colors: set, t
 def main():
     parser = argparse.ArgumentParser(description="Audit a Slidev slides.md file for quality issues")
     parser.add_argument("file", help="Path to slides.md")
-    parser.add_argument("--palette", choices=["default", "mono", "warm", "custom"],
+    parser.add_argument("--palette", choices=[*PALETTES, "custom"],
                         default="default", help="Color palette to check against")
     parser.add_argument("--timing", type=int, default=0,
                         help="Target presentation time in minutes (0 to skip timing check)")

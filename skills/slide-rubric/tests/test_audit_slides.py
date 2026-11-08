@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -99,6 +100,11 @@ class Palette(unittest.TestCase):
         self.assertEqual(palette_findings('<rect fill="#2563EB80"/>'), [])
         self.assertNotEqual(palette_findings('<rect fill="#123456AA"/>'), [])
 
+    def test_svg_text_word_limit_comes_from_deck_constants(self):
+        words = audit.LIMITS["svg_text_words"]
+        self.assertIn(f"Text block with {words + 1} words",
+                      " ".join(map(str, svg_issues("<text>" + " ".join(["wordy"] * (words + 1)) + "</text>"))))
+
     def test_short_hex_outside_the_palette_is_flagged(self):
         self.assertEqual(1, len(palette_findings('<rect fill="#123"/>')))
 
@@ -107,6 +113,20 @@ class Palette(unittest.TestCase):
 
     def test_long_hex_in_the_palette_passes(self):
         self.assertEqual([], palette_findings('<rect fill="#2563eb"/>'))
+
+    def test_colour_removed_from_the_json_palette_is_flagged(self):
+        scripts = HERE.parent / "scripts"
+        constants = json.loads((scripts / "deck_constants.json").read_text())
+        del constants["palettes"]["default"]["primary"]
+        deck = '---\ntitle: t\n---\n\n<svg viewBox="0 0 800 350"><rect fill="#2563EB"/></svg>\n'
+        with tempfile.TemporaryDirectory() as d:
+            shutil.copy(scripts / "audit_slides.py", d)
+            (Path(d) / "deck_constants.json").write_text(json.dumps(constants))
+            (Path(d) / "slides.md").write_text(deck)
+            out = subprocess.run([sys.executable, str(Path(d) / "audit_slides.py"), str(Path(d) / "slides.md"),
+                                  "--json"], capture_output=True, text=True).stdout
+        messages = [i["message"] for i in json.loads(out)["issues"]]
+        self.assertEqual(1, len([m for m in messages if "#2563EB" in m]))
 
     def test_custom_palette_skips_the_check(self):
         deck = '---\ntitle: t\n---\n\n<svg viewBox="0 0 800 350"><rect fill="#123456"/></svg>\n'

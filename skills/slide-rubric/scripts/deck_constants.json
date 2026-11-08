@@ -13,6 +13,49 @@
     "elements_error": 10,
     "notes_words_min": 80,
     "notes_words_max": 300,
-    "seconds_per_slide": 90
+    "seconds_per_slide": 90,
+    "svg_text_words": 6
+  },
+  "palettes": {
+    "default": {
+      "primary": "#2563EB",
+      "accent": "#F59E0B",
+      "danger": "#EF4444",
+      "success": "#10B981",
+      "neutral_fill": "#F3F4F6",
+      "text_on_dark": "#FFFFFF",
+      "text_on_light": "#1F2937",
+      "border": "#E5E7EB",
+      "connector": "#6B7280",
+      "danger_tint": "#FEF2F2",
+      "danger_tint_strong": "#FECACA",
+      "success_tint": "#F0FDF4",
+      "success_tint_strong": "#BBF7D0",
+      "primary_tint": "#EFF6FF",
+      "primary_tint_strong": "#BFDBFE",
+      "accent_tint": "#FEF3C7",
+      "accent_tint_strong": "#FDE68A"
+    },
+    "mono": {
+      "primary": "#1E293B",
+      "secondary": "#475569",
+      "tertiary": "#94A3B8",
+      "neutral_fill": "#F1F5F9",
+      "text_on_dark": "#FFFFFF",
+      "text_on_light": "#1E293B",
+      "border": "#CBD5E1",
+      "connector": "#64748B"
+    },
+    "warm": {
+      "primary": "#7C3AED",
+      "accent": "#F97316",
+      "danger": "#DC2626",
+      "success": "#059669",
+      "neutral_fill": "#FAF5FF",
+      "text_on_dark": "#FFFFFF",
+      "text_on_light": "#1F2937",
+      "border": "#E9D5FF",
+      "connector": "#6B7280"
+    }
   }
 }
