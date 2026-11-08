@@ -1,6 +1,6 @@
 ---
 name: design-rubric
-description: Judges a diff's design against principles and code-health smells, and blocks a commit that lowers a touched file's health or worsens its public interface. Use before each commit of production work and in design review of a diff. Not for carrying out the cure (refactoring).
+description: Judges a diff's design against principles and code-health smells, and blocks a commit that lowers a touched file's health or worsens its public interface. Use when about to commit production work, and in design review of a diff. Not for carrying out the cure (refactoring).
 ---
 
 # Design rubric

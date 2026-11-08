@@ -1,6 +1,6 @@
 ---
 name: workflow-design
-description: Designs a multi-agent Workflow script that survives its own failures, with per-agent call budgets, checkpoints, resume-safe prompts, installments, monitoring, harvest after an interruption, and verify tiers. Use before writing or revising any Workflow script, or when a run retries, stalls, runs away or pays twice on resume. Not for script API syntax (workflow-authoring) or for choosing each stage's model (subagent-model-tiering).
+description: Designs a multi-agent Workflow script that survives its own failures, with per-agent call budgets, checkpoints, resume-safe prompts, installments, monitoring, harvest after an interruption, and verify tiers. Use when about to write or revise any Workflow script, or when a run retries, stalls, runs away or pays twice on resume. Not for script API syntax (workflow-authoring) or for choosing each stage's model (subagent-model-tiering).
 ---
 
 # Workflow design

@@ -1,6 +1,6 @@
 ---
 name: interface-design
-description: Interviews the human to settle a public interface before it is built (who calls it, what two entry points could disagree on, which rule wins, what is frozen, and when the builder must stop) and records it as a draft with numbered invariants. Use in the main session before a public function, exported surface, protocol or service API is designed or altered, or when two entry points may give different answers. Not for failure handling (error-modeling).
+description: Interviews the human to settle a public interface before it is built (who calls it, what two entry points could disagree on, which rule wins, what is frozen, and when the builder must stop) and records it as a draft with numbered invariants. Use when, in the main session, a public function, exported surface, protocol or service API is about to be designed or altered, or when two entry points may give different answers. Not for failure handling (error-modeling).
 ---
 
 # Interface design

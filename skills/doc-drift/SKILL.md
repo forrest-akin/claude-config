@@ -1,6 +1,6 @@
 ---
 name: doc-drift
-description: Finds the docs and config a change made wrong, or sweeps a whole repo for doc-vs-code and doc-vs-doc drift, and decides which side wins each conflict. Use before committing a change that renames, removes or recounts something, when asked whether docs match the code, or for a repo-wide drift audit. Not for reviewing a single document's quality.
+description: Finds the docs and config a change made wrong, or sweeps a whole repo for doc-vs-code and doc-vs-doc drift, and decides which side wins each conflict. Use when about to commit a change that renames, removes or recounts something, when asked whether docs match the code, or for a repo-wide drift audit. Not for reviewing a single document's quality.
 ---
 
 # Doc drift
