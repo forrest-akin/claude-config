@@ -82,7 +82,8 @@ The plan keeps `keep` rows on purpose so a reviewer can audit *why* something wa
 spared, rather than trusting that the protection logic ran.
 
 `reclaim-apply.sh` fails closed: it refuses any category the planner does not
-emit, refuses `/` and `$HOME`, and skips paths that vanished since planning. A
+emit, refuses `/` and `$HOME`, and skips paths that vanished since planning or
+that `rm` could not remove; a skipped row is not counted as reclaimed. A
 hand-edited plan cannot turn it into a general-purpose deleter.
 
 ---

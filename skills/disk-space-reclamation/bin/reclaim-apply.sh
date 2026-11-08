@@ -58,10 +58,13 @@ while IFS=$'\t' read -r action size_kb category reason path; do
     /|"$HOME"|"$HOME"/) echo "reclaim-apply: REFUSING unsafe path $path" >&2; skipped=$((skipped+1)); continue ;;
   esac
 
-  if [ "$CONFIRM" -eq 1 ]; then
-    rm -rf "$path" && printf '%s\tdeleted\t%s\n' "$(date +%H:%M:%S)" "$path" >> "$LOG"
-  else
+  if [ "$CONFIRM" -eq 0 ]; then
     printf 'would delete  %8s KB  %s\n' "${size_kb:-?}" "$path"
+  elif ! rm -rf "$path"; then
+    echo "reclaim-apply: could not remove $path" >&2
+    skipped=$((skipped+1)); continue
+  else
+    printf '%s\tdeleted\t%s\n' "$(date +%H:%M:%S)" "$path" >> "$LOG"
   fi
   n=$((n+1)); kb=$((kb + ${size_kb:-0}))
 done < "$PLAN"

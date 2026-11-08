@@ -48,5 +48,12 @@ out="$(apply --confirm)"
 check "confirm deletes a valid row" no "$(exists "$T/app/node_modules")"
 check "confirm counts the deletion" 1 "$(printf '%s\n' "$out" | grep -c 'deleted 1 dir')"
 
+mkdir -p "$T/locked/node_modules"; touch "$T/locked/node_modules/f"; chmod 555 "$T/locked"
+plan node_modules "$T/locked/node_modules"
+out="$(apply --confirm)"
+check "failed removal is skipped" 1 "$(printf '%s\n' "$out" | grep -c 'skipped 1 row')"
+check "failed removal is not counted" 1 "$(printf '%s\n' "$out" | grep -c 'deleted 0 dir')"
+check "failed removal is named" 1 "$(printf '%s\n' "$out" | grep -c "could not remove $T/locked/node_modules")"
+
 printf '%d passed, %d failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]
