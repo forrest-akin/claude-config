@@ -29,9 +29,9 @@ class PerSlideFrontmatterAndLayoutPlan(unittest.TestCase):
         self.assertEqual([], plan_issues)
 
 
-def svg_issues(inner, palette=audit.PALETTES["default"]):
+def svg_issues(inner, palette=audit.PALETTES["default"], viewbox="0 0 800 350"):
     report = audit.AuditReport()
-    audit.audit_svgs(1, [f'<svg viewBox="0 0 800 350">{inner}</svg>'], report, palette)
+    audit.audit_svgs(1, [f'<svg viewBox="{viewbox}">{inner}</svg>'], report, palette)
     return report.issues
 
 
@@ -55,6 +55,18 @@ class SvgElementCount(unittest.TestCase):
 
     def test_polygon_counts(self):
         self.assertEqual([audit.Severity.WARNING], element_findings('<rect/>' * 7 + '<polygon points="0,0 1,1 0,1"/>'))
+
+
+def viewbox_findings(viewbox):
+    return [i.message for i in svg_issues("", viewbox=viewbox) if "Missing viewBox" in i.message]
+
+
+class ViewBox(unittest.TestCase):
+    def test_decimal_viewbox_is_parsed(self):
+        self.assertEqual([], viewbox_findings("0 0 850.5 350"))
+
+    def test_comma_separated_viewbox_is_parsed(self):
+        self.assertEqual([], viewbox_findings("0,0,800,400"))
 
 
 if __name__ == "__main__":

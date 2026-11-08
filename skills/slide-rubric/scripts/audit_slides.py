@@ -135,6 +135,7 @@ SECONDS_PER_SLIDE = 90
 
 YAML_LINE = re.compile(r'^\s*$|^\s*[\w-]+\s*:|^\s+\S|^\s*-\s')
 COMMENT = re.compile(r'<!--(.*?)-->', re.DOTALL)
+VIEWBOX = re.compile(r'viewBox=["\']\s*' + r'[\s,]+'.join([r'(-?\d*\.?\d+)'] * 4) + r'\s*["\']')
 
 
 def split_chunks(lines: list[str]) -> list[list[str]]:
@@ -215,18 +216,18 @@ def audit_svgs(slide_idx: int, svgs: list[str], report: AuditReport, palette_col
         svg_label = f"SVG {svg_i + 1}" if len(svgs) > 1 else "SVG"
 
         # Check viewBox
-        vb_match = re.search(r'viewBox=["\'](\d+)\s+(\d+)\s+(\d+)\s+(\d+)["\']', svg)
+        vb_match = VIEWBOX.search(svg)
         if not vb_match:
             report.add(Severity.ERROR, slide_idx, svg_label, "Missing viewBox attribute")
         else:
-            vb_w = int(vb_match.group(3))
-            vb_h = int(vb_match.group(4))
+            vb_w = float(vb_match.group(3))
+            vb_h = float(vb_match.group(4))
             if vb_w > MAX_VIEWBOX_W:
                 report.add(Severity.WARNING, slide_idx, svg_label,
-                           f"viewBox width {vb_w}px exceeds recommended max {MAX_VIEWBOX_W}px")
+                           f"viewBox width {vb_w:g}px exceeds recommended max {MAX_VIEWBOX_W}px")
             if vb_h > MAX_VIEWBOX_H:
                 report.add(Severity.WARNING, slide_idx, svg_label,
-                           f"viewBox height {vb_h}px exceeds recommended max {MAX_VIEWBOX_H}px")
+                           f"viewBox height {vb_h:g}px exceeds recommended max {MAX_VIEWBOX_H}px")
 
         # Check font sizes
         font_sizes = re.findall(r'font-size=["\']?(\d+(?:\.\d+)?)', svg)
