@@ -7,9 +7,9 @@ description: Decides whether a change needs a stack of commits and cuts the boun
 
 ## Stack or not
 
-Always stack a breaking change to an API, schema or event contract (expand, then contract); a
-refactor that comes with a behavior change; and a change past about 300 changed lines or with
-more than one behavior. Otherwise stack when at least two hold, else one commit:
+Always stack a breaking change to an API, schema or event contract (expand, then contract), and a
+change past about 300 changed lines or with more than one behavior. Otherwise stack when at least
+two hold, else one commit:
 
 - layered change where each layer deploys on its own;
 - a partial delivery that is useful by itself;
@@ -21,7 +21,7 @@ and its contract, a refactor and a behavior change, or more than one behavior in
 
 ## Cutting
 
-- Test every cut: could trunk ship right here with nothing after it? If not, re-cut.
+- At every cut, ask whether trunk could ship right here with nothing after it. If not, re-cut.
 - Each commit can be reverted alone without breaking the ones after it.
 - Map tasks to commits, one each by default. Merge tasks that can't deploy without each other.
   Split a task that has an additive and a destructive half. Order every additive change before the
