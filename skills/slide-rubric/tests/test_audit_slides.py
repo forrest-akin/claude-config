@@ -29,5 +29,33 @@ class PerSlideFrontmatterAndLayoutPlan(unittest.TestCase):
         self.assertEqual([], plan_issues)
 
 
+def svg_issues(inner, palette=audit.PALETTES["default"]):
+    report = audit.AuditReport()
+    audit.audit_svgs(1, [f'<svg viewBox="0 0 800 350">{inner}</svg>'], report, palette)
+    return report.issues
+
+
+def element_findings(inner):
+    return [i.severity for i in svg_issues(inner) if "elements" in i.message]
+
+
+class SvgElementCount(unittest.TestCase):
+    def test_more_than_ten_shapes_is_an_error(self):
+        self.assertEqual([audit.Severity.ERROR], element_findings('<rect/>' * 12))
+
+    def test_eight_shapes_is_a_warning(self):
+        self.assertEqual([audit.Severity.WARNING], element_findings('<rect/>' * 8))
+
+    def test_arrow_path_with_marker_end_counts(self):
+        self.assertEqual([audit.Severity.WARNING], element_findings('<rect/>' * 7 + '<path d="M0 0" marker-end="url(#a)"/>'))
+
+    def test_path_inside_marker_does_not_count(self):
+        marker = '<defs><marker id="a"><path d="M0 0L10 5z"/></marker></defs>'
+        self.assertEqual([], element_findings(marker + '<rect/>' * 7))
+
+    def test_polygon_counts(self):
+        self.assertEqual([audit.Severity.WARNING], element_findings('<rect/>' * 7 + '<polygon points="0,0 1,1 0,1"/>'))
+
+
 if __name__ == "__main__":
     unittest.main()

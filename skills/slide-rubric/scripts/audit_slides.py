@@ -235,29 +235,19 @@ def audit_svgs(slide_idx: int, svgs: list[str], report: AuditReport, palette_col
                 report.add(Severity.ERROR, slide_idx, svg_label,
                            f"Font size {fs}px below minimum {MIN_FONT_SIZE}px — text will be unreadable")
 
-        # Count major elements
-        rect_count = len(re.findall(r'<rect\b', svg))
-        circle_count = len(re.findall(r'<circle\b', svg))
-        ellipse_count = len(re.findall(r'<ellipse\b', svg))
-        line_count = len(re.findall(r'<line\b', svg))
-        path_count = len(re.findall(r'<path\b(?![^>]*marker)', svg))  # exclude marker paths
-        polygon_count = len(re.findall(r'<polygon\b', svg))
-        # Don't count text or markers as "elements" for density purposes
-        # but do count polyline
-        polyline_count = len(re.findall(r'<polyline\b', svg))
-
-        shape_count = rect_count + circle_count + ellipse_count
-        connector_count = line_count + path_count + polyline_count
+        drawn = re.sub(r'<marker\b.*?</marker>', '', svg, flags=re.DOTALL)
+        shape_count = sum(len(re.findall(rf'<{tag}\b', drawn)) for tag in ("rect", "circle", "ellipse", "polygon"))
+        connector_count = sum(len(re.findall(rf'<{tag}\b', drawn)) for tag in ("line", "path", "polyline"))
         total_elements = shape_count + connector_count
 
-        if total_elements > MAX_ELEMENTS_PER_SVG:
+        if total_elements > MAX_ELEMENTS_PER_SVG + 3:
+            report.add(Severity.ERROR, slide_idx, svg_label,
+                       f"{total_elements} elements — figure is too complex for a slide. Split into multiple slides.")
+        elif total_elements > MAX_ELEMENTS_PER_SVG:
             report.add(Severity.WARNING, slide_idx, svg_label,
                        f"{total_elements} elements detected (shapes: {shape_count}, "
                        f"connectors: {connector_count}). Recommended max: {MAX_ELEMENTS_PER_SVG}. "
                        f"Consider simplifying.")
-        elif total_elements > MAX_ELEMENTS_PER_SVG + 3:
-            report.add(Severity.ERROR, slide_idx, svg_label,
-                       f"{total_elements} elements — figure is too complex for a slide. Split into multiple slides.")
 
         # Check text anchoring inside shapes
         text_elements = re.findall(r'<text\b[^>]*>', svg)
