@@ -35,7 +35,7 @@ class PerSlideFrontmatterAndLayoutPlan(unittest.TestCase):
 
 def svg_issues(inner, palette=audit.PALETTES["default"], viewbox="0 0 800 350"):
     report = audit.AuditReport()
-    audit.audit_svgs(1, [f'<svg viewBox="{viewbox}">{inner}</svg>'], report, palette)
+    audit.audit_svgs({"index": 1, "svgs": [f'<svg viewBox="{viewbox}">{inner}</svg>']}, report, palette)
     return report.issues
 
 

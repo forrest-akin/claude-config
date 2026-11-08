@@ -216,8 +216,9 @@ def long_hex(color: str) -> str:
     return "#" + (digits[:6] if len(digits) >= 6 else "".join(d * 2 for d in digits))
 
 
-def audit_svgs(slide_idx: int, svgs: list[str], report: AuditReport, palette_colors: set):
+def audit_svgs(slide: dict, report: AuditReport, palette_colors: set):
     """Audit SVG elements within a slide."""
+    slide_idx, svgs = slide["index"], slide["svgs"]
     for svg_i, svg in enumerate(svgs):
         svg_label = f"SVG {svg_i + 1}" if len(svgs) > 1 else "SVG"
 
@@ -352,7 +353,7 @@ def audit_slides(slides: list[dict], report: AuditReport, palette_colors: set, t
 
         # SVG audits
         if slide["svgs"]:
-            audit_svgs(idx, slide["svgs"], report, palette_colors)
+            audit_svgs(slide, report, palette_colors)
             if not slide["has_layout_plan"]:
                 report.add(Severity.INFO, idx, "SVG",
                            "No layout plan comment found. Adding one helps prevent overlap issues.")
