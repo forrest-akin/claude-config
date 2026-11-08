@@ -31,6 +31,9 @@ Decide the model before writing the producer.
 - No silent catch. A handler converts to a modeled value or rethrows toward a layer that does.
   Log-and-continue, an empty catch and default-on-error are defects; a blind rethrow only moves
   the problem.
+- Turn on the lints for exhaustive switches and silent catches: clippy `wildcard_enum_match_arm`
+  and `let_underscore_must_use`; typescript-eslint `switch-exhaustiveness-check` and
+  `no-floating-promises`; ESLint `no-empty`.
 - Don't convert exceptions to results deep in the core; the producer should have returned the
   result.
 
