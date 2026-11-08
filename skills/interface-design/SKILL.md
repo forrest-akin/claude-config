@@ -10,10 +10,6 @@ spikes (`plan-readiness` "Comparative spike") and prototypes supply evidence to 
 
 ## The interview
 
-- It runs in the main session, the only context with the human and `AskUserQuestion`.
-- Each question comes with its evidence (what the code does now, spike or prototype results, the
-  interface numbers from `design-rubric`) and the possible answers with their trade-offs. Claude
-  recommends only when the human asks.
 - Each answer goes into the draft, attributed to the human.
 - The interview has converged when every public signature, every invariant, the precedence order
   and the frozen paths have an attributed answer. An item still open becomes a stop condition.
@@ -88,31 +84,13 @@ and why; everything behind the interface is yours to structure.
 
 ## Protected paths
 
-- An area's interface lives in its own file:
-
-  | Stack | Interface file | Committed surface report |
-  | - | - | - |
-  | Rust | `lib.rs` / `mod.rs` pub items, or an `-api` crate | `cargo public-api` listing |
-  | TypeScript | `src/<area>/index.ts` | API Extractor `etc/*.api.md` |
-  | JVM | an `-api` module or `api/` package | Kotlin ABI dump `api/*.api` |
-  | System boundary | `proto/**`, `openapi.yaml`, `schemas/**`, migrations | the files themselves |
-
-  Invariant tests live in `tests/invariants/**`, written invariants in `docs/invariants/*.md`.
+- An area's interface lives in its own file. The file per stack, and what ask rules miss, are in
+  `references/platform.md`.
+- Invariant tests live in `tests/invariants/**`, written invariants in `docs/invariants/*.md`.
 - The implementer's first commit transcribes the draft into the interface file,
   `docs/invariants/<area>.md` and the invariant tests, commits the surface report, and adds a
   `permissions.ask` rule for each of those paths to the repo's `.claude/settings.json`, for
   example `"ask": ["Edit(/src/access/index.ts)", "Edit(/tests/invariants/**)"]`. Rules take
   gitignore syntax anchored with `/` to their settings source; Edit rules cover Write.
-- An ask rule prompts in auto mode and even after a PreToolUse hook allowed the call. A subagent's
-  prompt surfaces in the main session naming the subagent; Esc denies that one call.
 - A prompt during implementation means the interview missed something: deny it and reopen the
   interview with the human. Never approve the diff.
-- Edit rules do not catch a script that opens files itself. They guard cooperating agents; they
-  are not a security boundary.
-
-## Sources
-
-Docs read 2026-11-07: [permissions](https://code.claude.com/docs/en/permissions.md) ("Read and
-Edit", "Precedence among rules, hooks, and mods"),
-[sub-agents](https://code.claude.com/docs/en/sub-agents.md) ("Run subagents in foreground or
-background").

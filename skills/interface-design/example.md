@@ -1,10 +1,5 @@
 # Interface design example
 
-An access-control module from the report "Abstractions at Agent Speed" (5–6 November 2026), with
-two public functions, `can()` and `api.handle_check()`, that other services call. The report's
-final arm ran with these sections plus rules for old code; 3 of 3 chains finished with both
-functions enforcing all five rules.
-
 ## Invariants, precedence and stop conditions
 
 ```markdown
@@ -25,9 +20,9 @@ functions enforcing all five rules.
 
 Do not settle these yourself. Leave the work in a state that passes the tests, and put the question at the top of your summary:
 
-- an existing public function would end up giving a different answer from another public function for the same user, resource and action;
-- two agreements conflict and the order above does not settle it;
-- an invariant test would have to be weakened, skipped or worked around.
+- two public entry points would give different answers for the same inputs: the same user, resource and action;
+- two written rules conflict and no precedence settles it;
+- an invariant test would have to be weakened, narrowed, skipped or worked around.
 ```
 
 ## Agreement test with generated cases
