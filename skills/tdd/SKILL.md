@@ -24,11 +24,6 @@ description: Drives a new behavior or a reproducible bug fix test-first, one fai
   rather than writing the literal and waiting for a second test.
 - Before committing, break each new branch once. A break that leaves every test green marks code
   no test demanded: add the test or delete the code.
-
-## Two hats
-
-- Either add behavior (red to green) or restructure (green to green), never both at once. A
-  rename that tempts you mid-red is reverted; get green, then rename as its own step.
 - While refactoring, don't anticipate: no early next test, and no unifying near-duplicates until a
   test forces the shape.
 
@@ -38,6 +33,4 @@ description: Drives a new behavior or a reproducible bug fix test-first, one fai
   first check whether the code can move beneath the entrypoint so only the entrypoint remains,
   then ask before landing what remains without a test, and put the no-test rationale in the
   commit body.
-- Characterizing legacy code before changing it is a separate, looser activity: pin what it does
-  now, wrong parts included, then drive the change test-first.
-- Whenever test-first is skipped, say so and why.
+- Legacy code with no tests gets characterization tests first (`refactoring`).

@@ -27,7 +27,6 @@ description: Restructures code without changing behavior, one named move per gre
   over the long method it causes).
 - Shotgun surgery and divergent change are cured by a campaign, not a move: give the concept a
   home, then keep moving pieces into it. Don't stop after the first move.
-- Slowness is not a smell; that is performance work, measured separately.
 
 ## Names
 
