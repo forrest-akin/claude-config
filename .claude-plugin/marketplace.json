@@ -1,0 +1,12 @@
+{
+  "name": "forrest-akin",
+  "description": "Forrest Akin's Claude Code plugin",
+  "owner": { "name": "Forrest Akin" },
+  "plugins": [
+    {
+      "name": "fakin-claude-config",
+      "source": "./",
+      "description": "Skills and hooks for planning, sequencing commits, test-first building, design review and multi-agent workflows"
+    }
+  ]
+}

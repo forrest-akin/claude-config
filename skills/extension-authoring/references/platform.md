@@ -1,4 +1,4 @@
-# Platform facts (checked 2026-11-07)
+# Platform facts (checked 2026-11-08)
 
 ## Silent failures
 
@@ -37,6 +37,11 @@ Plugins:
 - A component path that resolves outside the plugin root doesn't load.
 - The `CLAUDE_PLUGIN_ROOT` substitution resolves in skill, command and agent bodies, but isn't
   set in the Bash tool's environment.
+- A plugin name starting with "claude-" fails `claude plugin validate` as reserved; one
+  containing "claude" elsewhere passes with a warning that it reads as Anthropic's own.
+- Each validate warning, the root CLAUDE.md one included, fails `--strict` (2.1.319).
+- A marketplace added from GitHub installs a cached copy pinned to `version`; one added from
+  a local path loads the working tree, unpinned.
 
 Memory and configuration:
 - Only the first 200 lines or 25 KB of `MEMORY.md` load; topic files are read on demand, so a

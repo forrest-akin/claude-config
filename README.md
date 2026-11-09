@@ -5,6 +5,15 @@ Personal Claude Code configuration: standing instructions, skills and hooks.
 `CLAUDE.md` holds the standing instructions. Linked to `~/.claude/CLAUDE.md`, it loads in every
 session.
 
+## Install as a plugin
+
+```bash
+claude plugin marketplace add forrest-akin/claude-config
+claude plugin install fakin-claude-config@forrest-akin
+```
+
+Skills load as `/fakin-claude-config:<skill>`, and `hooks/hooks.json` registers the three hooks.
+
 ## Install
 
 ```bash
@@ -36,6 +45,7 @@ and `bash-prefix.sh` on PreToolUse (Bash) in `~/.claude/settings.json`, adding e
   and asks for literal absolute paths.
 
 ```bash
+bash test/hooks-json.test.sh
 bash test/call-budget.test.sh
 bash test/bash-prefix.test.sh
 bash test/diff-size.test.sh

@@ -1,0 +1,7 @@
+{
+  "name": "fakin-claude-config",
+  "version": "1.0.0",
+  "description": "Skills and hooks for planning, sequencing commits, test-first building, design review and multi-agent workflows",
+  "author": { "name": "Forrest Akin" },
+  "repository": "https://github.com/forrest-akin/claude-config"
+}
