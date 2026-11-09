@@ -81,13 +81,14 @@ The rule is the same for a Workflow script and for a plain Agent call.
 
 ## Workflows — load the design skill first, hard rule
 
-Invoke `Skill(skill: "workflow-design")` before authoring or revising any Workflow
-script. Every time, including when the script looks routine. It is model-invoked —
-nothing fires it automatically, and a per-project memory does not carry to the next
-repo.
+Invoke `Skill(skill: "fakin-claude-config:workflow-design")` before authoring or revising
+any Workflow script. Every time, including when the script looks routine. It is
+model-invoked — nothing fires it automatically, and a per-project memory does not carry to
+the next repo.
 
-If `workflow-design` is not in this session's skill list, stop and tell me so. Do not write
-the script from memory and do not reconstruct the rules from what you remember of them.
+If `fakin-claude-config:workflow-design` is not in this session's skill list, stop and tell
+me so. Do not write the script from memory and do not reconstruct the rules from what you
+remember of them.
 
 The listing can grow mid-session, so it is not exhaustive. If I name a skill you cannot see,
 call `Skill` with that exact name once; if that fails, tell me which config dir the session is

@@ -1,41 +1,43 @@
 # claude-config
 
-Personal Claude Code configuration: standing instructions, skills and hooks.
+A Claude Code plugin of skills and hooks. `CLAUDE.md` is Forrest's personal standing instructions;
+the plugin does not install it. It reaches `~/.claude/CLAUDE.md` by a symlink you create:
+`ln -s /path/to/repo/CLAUDE.md ~/.claude/CLAUDE.md`.
 
-`CLAUDE.md` holds the standing instructions. Linked to `~/.claude/CLAUDE.md`, it loads in every
-session.
-
-## Install as a plugin
+## Install
 
 ```bash
 claude plugin marketplace add forrest-akin/claude-config
 claude plugin install fakin-claude-config@forrest-akin
 ```
 
-Skills load as `/fakin-claude-config:<skill>`, and `hooks/hooks.json` registers the three hooks.
+Skills load as `/fakin-claude-config:<skill>`.
 
-## Install
+## Update
 
-```bash
-./install.sh
-```
-
-Symlinks `CLAUDE.md`, each `skills/*` directory and each `hooks/*.sh` into `~/.claude`. Re-running is safe.
-It refuses to replace an existing `~/.claude/CLAUDE.md`, `~/.claude/skills/<name>` or `~/.claude/hooks/<name>.sh`
-that is not its own link, and changes nothing when `~/.claude/settings.json` is not valid JSON.
-Before linking, it removes each of its own links whose target in this repo is missing and prints
-`unlinked <path>`; links elsewhere are left alone.
+An install is a cached copy pinned to `version` in `.claude-plugin/plugin.json`, so a release
+bumps it and is pushed to `main`. Then:
 
 ```bash
-bash test/install.test.sh
+claude plugin marketplace update forrest-akin
+claude plugin update fakin-claude-config@forrest-akin
 ```
 
-Runs the installer against a fixture repo and a temporary `HOME`.
+## Develop
+
+```bash
+claude plugin validate .
+```
+
+Run it without `--strict`: the plugin name warning and the root `CLAUDE.md` warning fail it.
+
+A marketplace added from a local path loads the working tree, unpinned:
+`claude plugin marketplace add /path/to/repo`.
 
 ## Hooks
 
-`install.sh` registers `call-budget.sh` on PostToolUse, `diff-size.sh` on PostToolUse (Edit|Write)
-and `bash-prefix.sh` on PreToolUse (Bash) in `~/.claude/settings.json`, adding each entry once.
+`hooks/hooks.json` registers `call-budget.sh` on PostToolUse, `diff-size.sh` on PostToolUse
+(Edit|Write) and `bash-prefix.sh` on PreToolUse (Bash).
 
 - `call-budget.sh` tells an agent its tool-call count when it reaches 80% of the budget its first
   prompt names (the phrasings in `test/fixtures/budget-phrasings.txt`) and on every call from 100%.
@@ -116,4 +118,4 @@ cp -R templates/slidev-presentations/. /path/to/presentations-repo/
 ```
 
 Set `author` to your handle in the frontmatter the command writes. `slide-designer`'s arc draws on
-`presentation-narrative`, linked by `install.sh`.
+`presentation-narrative` from this plugin, as `fakin-claude-config:presentation-narrative`.
