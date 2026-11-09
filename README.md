@@ -32,8 +32,8 @@ and `bash-prefix.sh` on PreToolUse (Bash) in `~/.claude/settings.json`, adding e
   prompt names (the phrasings in `test/fixtures/budget-phrasings.txt`) and on every call from 100%.
 - `diff-size.sh` tells the model the uncommitted size of the edited file's repo on every Edit or
   Write while it is over 200 lines or 4 files.
-- `bash-prefix.sh` denies a Bash command that starts with `NAME=value` or `cd`, quoting
-  `CLAUDE.md` "Bash commands".
+- `bash-prefix.sh` denies a Bash command that starts with `NAME=value` or `cd`
+  and asks for literal absolute paths.
 
 ```bash
 bash test/call-budget.test.sh

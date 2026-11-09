@@ -1,6 +1,6 @@
 ---
 name: subagent-model-tiering
-description: Picks the model and effort for each subagent or workflow stage, with tier by kind of work, effort by ambiguity and the cost of a wrong answer, one-step escalation on a weak result, and how to prompt each tier. Use when about to make an Agent call or a fan-out, or when writing per-stage model options into a Workflow script. Not for the main session's own model, or for how many agents to run (CLAUDE.md "Subagents").
+description: Picks the model and effort for each subagent or workflow stage, with tier by kind of work, effort by ambiguity and the cost of a wrong answer, one-step escalation on a weak result, and how to prompt each tier. Use when about to make an Agent call or a fan-out, or when writing per-stage model options into a Workflow script. Not for the main session's own model, or for how many agents to run.
 ---
 
 # Subagent model tiering

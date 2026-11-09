@@ -34,8 +34,9 @@ Docs read 2026-10-25 against Claude Code 2.1.310:
 
 ## Measured budgets
 
-- CLAUDE.md "Subagents" sets the call budgets. Measured 2026-10-26 on a 1M window: 42-64 calls
-  peaked at 102-156K tokens of context, with no deaths. Research agents died at 75-80 calls
-  (2026-09-10).
+- Call budget per installment: about 55 calls for an agent that builds or folds commits on a 1M
+  window, about 30 for any other; no agent runs past 50% of its context window. Measured
+  2026-10-26: 42-64 calls peaked at 102-156K tokens of context, with no deaths. Research agents
+  died at 75-80 calls (2026-09-10).
 - An opus agent at xhigh cost about 155K tokens (2026-09-10); sonnet or low effort costs a
   fraction.

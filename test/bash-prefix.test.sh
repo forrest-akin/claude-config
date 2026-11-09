@@ -8,7 +8,7 @@ check() { if [ "$2" = "$3" ]; then echo "ok   $1"; else echo "FAIL $1: expected 
 
 run() { jq -cn --arg c "$1" '{hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:$c}}' | bash "$hook" 2>&1; }
 denied() {
-  jq -cn --arg r "Command starts with \`$1\`. ~/.claude/CLAUDE.md \"Bash commands\": Put literal absolute paths in each command: no \`cd <dir> &&\` prefix and no \`VAR=<path>;\` shorthand." \
+  jq -cn --arg r "Command starts with \`$1\`. Put literal absolute paths in each command: no \`cd <dir> &&\` prefix and no \`VAR=<path>;\` shorthand." \
     '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
 }
 
