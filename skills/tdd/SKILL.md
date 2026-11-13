@@ -37,5 +37,5 @@ description: Drives a new behavior or a reproducible bug fix test-first, one fai
 - A change with no behavior to pin (config, wiring, formatting, generated code, runner setup):
   first check whether the code can move beneath the entrypoint so only the entrypoint remains,
   then ask before landing what remains without a test, and put the no-test rationale in the
-  commit body.
+  commit body. Where nobody can answer, land it and report the step skipped with the reason.
 - Legacy code with no tests gets characterization tests first (`refactoring`).
