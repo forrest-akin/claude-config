@@ -24,6 +24,8 @@ description: Drives a new behavior or a reproducible bug fix test-first, one fai
   rather than writing the literal and waiting for a second test.
 - Before committing, break each new branch once. A break that leaves every test green marks code
   no test demanded: add the test or delete the code.
+- Add behavior or restructure, never both in one step. A rename that tempts you mid-red is
+  reverted until green, then made as its own step.
 - While refactoring, don't anticipate: no early next test, and no unifying near-duplicates until a
   test forces the shape.
 
