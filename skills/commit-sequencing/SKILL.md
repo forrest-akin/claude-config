@@ -17,7 +17,8 @@ two hold, else one commit:
 - risky shared state (shared tables, hot endpoints).
 
 A stack estimated under about 100 lines collapses to one commit, unless that would put an expand
-and its contract, a refactor and a behavior change, or more than one behavior in one commit.
+and its contract, a refactor or mechanical change and a behavior change, or more than one behavior
+in one commit.
 
 ## Cutting
 
@@ -26,6 +27,8 @@ and its contract, a refactor and a behavior change, or more than one behavior in
 - Map tasks to commits, one each by default. Merge tasks that can't deploy without each other.
   Split a task that has an additive and a destructive half. Order every additive change before the
   destructive change that depends on it.
+- A mechanical change (formatting, a file move, regenerated files, a lockfile or dependency bump)
+  or a preparatory refactor is its own earlier commit, never mixed with behavior.
 - A dependency cycle between tasks is reported with both tasks and the artifact each waits on. No
   partial sequence is produced.
 - Estimate each commit's changed lines (code, tests and docs) and re-cut any past about 300 at a
