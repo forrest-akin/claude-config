@@ -30,6 +30,9 @@ Hooks:
 - Only exit 2 blocks, and Claude reads its stderr as the reason: say there, in plain text, what
   to do instead. Any other non-zero exit is a non-blocking error and the action proceeds. stderr
   from exit 0 never reaches Claude.
+- Unlike other hooks, a `WorktreeCreate` hook fails worktree creation on any non-zero exit. It
+  replaces the harness's file copying, so `.worktreeinclude` is not processed: the hook copies env
+  files itself.
 - macOS `/bin/bash` is 3.2: no associative arrays, no `${var,,}`. Use Homebrew bash or python3.
 
 Plugins:
@@ -50,6 +53,7 @@ Memory and configuration:
   it by listing `~/.claude/projects/*/`, not by computing the name.
 - MCP servers live in `~/.claude.json` (local and user scope), `.mcp.json` (project scope) or
   `--mcp-config`, not in `settings.json`.
+- Settings `env` passes values literally: `~` and `$HOME` stay unexpanded (observed 2.1.277).
 
 ## Rule and import loading
 
@@ -69,4 +73,4 @@ Docs read 2026-10-25 against Claude Code 2.1.310:
 [plugins-reference](https://code.claude.com/docs/en/plugins-reference.md),
 [plugin manifest](https://code.claude.com/docs/en/plugins/manifest-reference.md). Observed on
 2.1.310 the same day: the base-directory prefix on a loaded skill, and placeholder substitution
-and command execution inside code fences.
+and command execution inside code fences. The `WorktreeCreate` facts: hooks docs read 2026-11-12.
