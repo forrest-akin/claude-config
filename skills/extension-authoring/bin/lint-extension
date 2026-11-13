@@ -11,6 +11,9 @@ Platform facts, read 2026-11-07:
     back to the first non-empty body line.
   https://code.claude.com/docs/en/sub-agents.md "Frontmatter reference": the agent keys
     below, `name` and `description` required.
+  https://code.claude.com/docs/en/tools-reference.md, read 2026-11-12: tool names are "the exact
+    strings" used in permission rules and subagent tool lists; TOOLS lists its table, plus the
+    `Task` alias from sub-agents.md.
   skills.md "Available string substitutions" and "Inject dynamic context": `$ARGUMENTS` and `$N`
     are substituted in a SKILL.md body unless a backslash precedes them; !`command` after
     whitespace or at line start runs at load. Supporting files are read unprocessed.
@@ -36,6 +39,14 @@ SKILL_KEYS = {"name", "description", "when_to_use", "argument-hint", "arguments"
 AGENT_KEYS = {"name", "description", "tools", "disallowedTools", "model", "permissionMode", "maxTurns",
               "autoCompactWindow", "skills", "mcpServers", "hooks", "memory", "background", "omitClaudeMd",
               "effort", "isolation", "color", "initialPrompt", "experimental"}
+TOOLS = {t.lower(): t for t in (
+    "Agent Artifact AskUserQuestion Bash CronCreate CronDelete CronList Edit EndConversation EnterPlanMode "
+    "EnterWorktree ExitPlanMode ExitWorktree Glob Grep ListAgents ListMcpResourcesTool LSP Monitor NotebookEdit "
+    "PowerShell PushNotification Read ReadMcpResourceTool RemoteTrigger ReportFindings ScheduleWakeup SendFeedback "
+    "SendMessage SendUserFile ShareOnboardingGuide Skill SubagentHandback Task TaskCreate TaskGet TaskList TaskOutput "
+    "TaskStop TaskUpdate TodoWrite ToolSearch WaitForMcpServers WebFetch WebSearch Workflow Write").split()}
+RULE_SPECIFIER = re.compile(r"\([^)]*\)")
+TOOL_ENTRY = re.compile(r"[A-Za-z_][\w-]*")
 
 
 def targets(path):
@@ -124,6 +135,7 @@ def lint(path, text):
                  for k, (line, _) in keys.items() if k not in known]
     if "description" in keys:
         findings += description_findings(keys)
+    findings += tool_casing_findings(keys, "tools" if agent else "allowed-tools")
     if not agent:
         findings += preprocessing_findings(text)
     return findings
@@ -139,6 +151,26 @@ def preprocessing_findings(text):
         if INLINE_COMMAND.search(line):
             findings.append((n, "!`command` runs at load, before Claude reads the body; show it in a supporting file"))
     return findings
+
+
+def tool_casing_findings(keys, field):
+    line, value = keys.get(field, (0, ""))
+    entries = TOOL_ENTRY.findall(RULE_SPECIFIER.sub("", without_comment(value)))
+    return [(line, f"{field} entry `{e}` matches no tool; the name is `{TOOLS[e.lower()]}`")
+            for e in entries if TOOLS.get(e.lower(), e) != e]
+
+
+def without_comment(value):
+    """YAML starts a comment at a `#` outside quotes that follows whitespace."""
+    quote = None
+    for i, c in enumerate(value):
+        if quote:
+            quote = None if c == quote else quote
+        elif c in "\"'":
+            quote = c
+        elif c == "#" and (i == 0 or value[i - 1].isspace()):
+            return value[:i]
+    return value
 
 
 def description_findings(keys):

@@ -59,6 +59,15 @@ class Frontmatter(unittest.TestCase):
             "a.md:4: unknown agent key `disallowed-tools` is ignored; agent keys are camelCase\n"
             "s/SKILL.md:4: unknown skill key `disableModelInvocation` is ignored; skill keys are hyphenated\n", 1))
 
+    def test_tool_name_differing_only_by_case(self):
+        self.assertEqual(lint({"s/SKILL.md": skill(f"name: s\ndescription: {GOOD}\nallowed-tools: Read, bash(git diff *)\n"),
+                               "a.md": skill(f"name: a\ndescription: {GOOD}\ntools:\n  - webfetch\n  - Task\n  - mcp__x__read\n"),
+                               "b.md": skill(f"name: b\ndescription: {GOOD}\ntools: [Grep, GLOB]\n"),
+                               "c.md": skill(f"name: c\ndescription: {GOOD}\ntools: Read, Grep  # read only, no edit\n")}), (
+            "a.md:4: tools entry `webfetch` matches no tool; the name is `WebFetch`\n"
+            "b.md:4: tools entry `GLOB` matches no tool; the name is `Glob`\n"
+            "s/SKILL.md:4: allowed-tools entry `bash` matches no tool; the name is `Bash`\n", 1))
+
     def test_unreadable_path_is_one_finding(self):
         self.assertEqual(lint({}, arg="nope"), ("nope: cannot read: No such file or directory\n", 1))
 
