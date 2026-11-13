@@ -37,7 +37,7 @@ in one commit.
   and behavior rules above. In check mode, `${CLAUDE_SKILL_DIR}/bin/stack-check BASE` applies
   these sizes and the red flags below to an existing stack; it counts lines under `.claude/` in
   their own column and leaves them out of the size flag.
-- Red flags: a placeholder message (WIP, temp, part N); code unreachable after its commit.
+- Red flags: a placeholder message (WIP, temp, part N); code that no commit in the stack calls.
 
 ## What forces expand/contract
 
