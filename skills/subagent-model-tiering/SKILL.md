@@ -15,8 +15,9 @@ Tiers, smallest to largest: `haiku`, `sonnet`, `opus`, `fable`.
 | Exactly specified work something downstream checks: transforms, given-text edits, running a gate, routing among named options | `sonnet` |
 | Judgment inside one project against a written spec: review, assessment, distilled research, test-first implementation, design-doc authoring, debugging | `opus` |
 | Reconciling many independent outputs into one verdict; work across a repo or contract boundary | `fable` |
-| Unsure | omit `model` and say why |
+| Unsure | `opus` at `high`; say why |
 
+- Never omit `model` or `effort`: an omitted `model` can fall through to the dispatcher's.
 - A dispatcher is tiered by its own work, not its children's.
 - Never mix models or effort inside a panel whose verdicts are compared.
 
