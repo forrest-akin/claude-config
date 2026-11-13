@@ -65,6 +65,12 @@ class Frontmatter(unittest.TestCase):
     def test_directory_with_no_extension_is_one_finding(self):
         self.assertEqual(lint({"notes.txt": "x\n"}), (".: no SKILL.md or agent file found\n", 1))
 
+    def test_skills_dir_entry_without_skill_md(self):
+        files = {"skills/s/SKILL.md": skill(f"name: s\ndescription: {GOOD}\n"), "skills/t/references/x.md": "x\n",
+                 "agents/sub/notes.txt": "x\n", "agents/a.md": skill(f"name: a\ndescription: {GOOD}\n")}
+        self.assertEqual(lint(files, arg="skills"), ("skills/t: holds no SKILL.md, so no skill loads from it\n", 1))
+        self.assertEqual(lint(files, arg="agents"), ("", 0))
+
     def test_folded_description_is_read_across_lines(self):
         self.assertEqual(lint({"s/SKILL.md": skill("name: s\ndescription: >\n  Does a thing.\n  Use when asked.\n")}), ("", 0))
 

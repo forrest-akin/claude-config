@@ -14,6 +14,7 @@ Platform facts, read 2026-11-07:
   skills.md "Available string substitutions" and "Inject dynamic context": `$ARGUMENTS` and `$N`
     are substituted in a SKILL.md body unless a backslash precedes them; !`command` after
     whitespace or at line start runs at load. Supporting files are read unprocessed.
+A directory named `skills` is checked for entries holding no SKILL.md.
 Every file under <path> is also checked: relative markdown links outside code resolve, and a
 bash script uses no bash 4 syntax.
 """
@@ -50,6 +51,14 @@ def targets(path):
         elif entry.endswith(".md"):
             found.append(os.path.join(path, entry))
     return found
+
+
+def skill_dir_findings(path):
+    if os.path.basename(os.path.abspath(path)) != "skills":
+        return []
+    return [f"{os.path.normpath(os.path.join(path, entry))}: holds no SKILL.md, so no skill loads from it"
+            for entry in sorted(os.listdir(path))
+            if os.path.isdir(os.path.join(path, entry)) and not os.path.isfile(os.path.join(path, entry, "SKILL.md"))]
 
 
 def files_under(path):
@@ -155,6 +164,7 @@ def main(argv):
         files = targets(argv[1])
         if not files:
             findings.append(f"{os.path.normpath(argv[1])}: no SKILL.md or agent file found")
+        findings += skill_dir_findings(argv[1])
         for f in files:
             try:
                 with open(f, encoding="utf-8") as fh:
