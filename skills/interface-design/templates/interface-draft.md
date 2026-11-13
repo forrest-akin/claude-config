@@ -39,6 +39,7 @@ Still open:
 ## 7. Standing rules
 
 - Old code is not an example.
-- A function that breaks an invariant is brought into line first, as its own
-  behaviour-preserving commit with existing tests green, before it is extended.
+- A function with a shape the invariants forbid is brought into line first, as its own
+  behaviour-preserving commit with existing tests green, before it is extended. An invariant
+  breach is a red test or a stop, never a tidy.
 - Tidy-first outranks smallest diff.

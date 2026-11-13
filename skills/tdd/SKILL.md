@@ -7,6 +7,9 @@ description: Drives a new behavior or a reproducible bug fix test-first, one fai
 
 ## Red
 
+- Before the first red, a function about to be extended whose shape a rule or an invariant test's
+  docstring forbids is brought into line, as its own behavior-preserving commit. An invariant
+  breach is a red test or a stop, never a tidy.
 - One failing test at a time. Never write tests in a batch ahead of the code.
 - A test that passes on its first run proves nothing yet: break the code it pins, watch it fail
   for the stated reason, restore.
