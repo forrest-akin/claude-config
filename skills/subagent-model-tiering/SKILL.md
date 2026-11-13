@@ -32,9 +32,12 @@ Tiers, smallest to largest: `haiku`, `sonnet`, `opus`, `fable`.
 
 Re-run once, the whole panel if its verdicts are compared:
 
+- Missing input (asked for a file, guessed a path): fix the prompt, same model and effort.
 - Lazy (skipped items, stopped early): same model, one effort level up.
 - Ignorant (confidently wrong, split verdict): one tier up.
 - Schema miss: restate the schema and re-run unchanged.
+- Structural miss (widened signature, rule left unenforced, duplicated decision): same model and
+  effort; the rule becomes an invariant test.
 
 A retry-prone stage runs cheaper, since every retry pays its effort again. After a stage's
 second stall, bound the request and drop its effort: a request that opens with long deliberation
