@@ -70,7 +70,7 @@ class InterfaceCheck(unittest.TestCase):
                 self.assertEqual(check_text(broken(old, new)), (f"unattributed: {finding}\n", 1))
 
     def test_edited_stop_conditions_are_reported(self):
-        self.assertEqual(check_text(broken("weakened,\nnarrowed, skipped", "weakened,\nskipped")),
+        self.assertEqual(check_text(broken("weakened, narrowed,\nskipped", "weakened,\nskipped")),
                          ("stop conditions differ from the template\n", 1))
 
     def test_edited_standing_rules_are_reported(self):

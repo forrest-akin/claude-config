@@ -17,9 +17,9 @@ fi
 for f in "$@"; do
   text="$(tr '\n' ' ' < "$f" | tr -s ' \t' ' ')"
   for clause in \
-    'two public entry points would give different answers for the same inputs' \
+    'an existing public function would answer differently from today, or from another public entry point, for the same inputs, unless the plan names that change' \
     'two written rules conflict and no precedence settles it' \
-    'an invariant test would have to be weakened, narrowed, skipped or worked around'; do
+    "an existing test's assertion would be weakened, narrowed, skipped, worked around or changed, unless the behaviour change is the task and the test follows it (say so in one line of the report)"; do
     found="$(printf '%s\n' "$text" | grep -c -F "$clause")"
     check "${f#"$repo"/}: $clause" yes "$([ "$found" -ge 1 ] && echo yes || echo no)"
   done

@@ -27,9 +27,11 @@ Two callers written against the signatures for two different uses.
 
 ## 6. Stop conditions
 
-Stop conditions: two public entry points would give different answers for the same inputs; two
-written rules conflict and no precedence settles it; an invariant test would have to be weakened,
-narrowed, skipped or worked around. In system-level work, a change on the breaking list in
+Stop conditions: an existing public function would answer differently from today, or from another
+public entry point, for the same inputs, unless the plan names that change; two written rules
+conflict and no precedence settles it; an existing test's assertion would be weakened, narrowed,
+skipped, worked around or changed, unless the behaviour change is the task and the test follows it
+(say so in one line of the report). In system-level work, a change on the breaking list in
 `commit-sequencing` ("What forces expand/contract") is the first.
 
 Still open:

@@ -20,9 +20,9 @@
 
 Do not settle these yourself. Leave the work in a state that passes the tests, and put the question at the top of your summary:
 
-- two public entry points would give different answers for the same inputs: the same user, resource and action;
+- an existing public function would answer differently from today, or from another public entry point, for the same inputs, unless the plan names that change (inputs: the same user, resource and action);
 - two written rules conflict and no precedence settles it;
-- an invariant test would have to be weakened, narrowed, skipped or worked around.
+- an existing test's assertion would be weakened, narrowed, skipped, worked around or changed, unless the behaviour change is the task and the test follows it (say so in one line of the report).
 ```
 
 ## Agreement test with generated cases
