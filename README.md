@@ -69,7 +69,6 @@ fails on any finding.
 
 ```bash
 bash test/lint-skills.test.sh
-python3 -m unittest discover -s skills/extension-authoring/tests
 ```
 
 ## Skill scripts
@@ -86,16 +85,13 @@ outline's timing table against the talk's window. `slide-rubric`'s `scripts/audi
 a deck, and the `disk-space-reclamation` scripts survey, select and apply a deletion plan.
 `interface-design`'s `bin/interface-check <draft>` checks an interface draft against its template.
 
+`test/run-skill-suites.sh` runs every `skills/*/tests` suite, its `test*.py` files by unittest
+discovery and each `*.sh` file as one test, and prints the total. It exits 1 when a suite fails or
+runs no test, and 2 when it finds no suite.
+
 ```bash
-python3 -m unittest discover -s skills/commit-sequencing/tests
-python3 -m unittest discover -s skills/doc-drift/tests
-python3 -m unittest discover -s skills/design-rubric/tests
-python3 -m unittest discover -s skills/interface-design/tests
-python3 -m unittest discover -s skills/plan-readiness/tests
-python3 -m unittest discover -s skills/workflow-design/tests
-python3 -m unittest discover -s skills/presentation-narrative/tests
-python3 -m unittest discover -s skills/slide-rubric/tests
-for t in skills/disk-space-reclamation/tests/*.sh; do bash "$t"; done
+bash test/run-skill-suites.sh
+bash test/run-skill-suites.test.sh
 ```
 
 ## Slidev
