@@ -92,5 +92,6 @@ Lizard does not measure the smells below; judge them by reading.
 ## Noticed and left alone
 
 A smell or broken invariant outside the task's change is left alone and recorded in the same
-commit: `${CLAUDE_SKILL_DIR}/bin/notice <path:line> <smell or invariant> <curing move>` appends
-it to `.claude/noticed.md` at the repo top level, from any directory. Plans dispose of its entries (`plan-readiness`).
+commit: `${CLAUDE_SKILL_DIR}/bin/notice <path:line> <smell or invariant> <curing move>` appends it
+to `.claude/noticed.md` at the repo top level, from any directory, unless an entry with the same
+path and smell is already there. Plans dispose of its entries (`plan-readiness`).

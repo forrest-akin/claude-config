@@ -19,6 +19,14 @@ def repo():
     return path
 
 
+def repo_with_ledger(text):
+    path = repo()
+    os.makedirs(os.path.join(path, ".claude"))
+    with open(os.path.join(path, ".claude", "noticed.md"), "w") as f:
+        f.write(text)
+    return path
+
+
 def run(cwd, *args):
     return subprocess.run(["python3", SCRIPT, *args], cwd=cwd, env=ENV, capture_output=True, text=True)
 
@@ -44,6 +52,21 @@ class Notice(unittest.TestCase):
         run(cwd, "b.ts:9", "Nested complexity", "Replace Nested Conditional with Guard Clauses")
         self.assertEqual(ledger(cwd), earlier
                          + f"- b.ts:9 — Nested complexity — Replace Nested Conditional with Guard Clauses — {TODAY}\n")
+
+    def test_entry_whose_path_and_smell_are_in_the_ledger_writes_nothing(self):
+        earlier = HEADING + "- src/app.rs:12 — Large method — Extract Function — 2026-01-02\n"
+        cwd = repo_with_ledger(earlier)
+        out = run(cwd, "src/app.rs:40", "Large method", "Split Phase")
+        self.assertEqual((out.stdout, out.returncode), ("already noticed: src/app.rs:12 — Large method\n", 0), out.stderr)
+        self.assertEqual(ledger(cwd), earlier)
+
+    def test_entry_sharing_only_its_path_or_only_its_smell_is_appended(self):
+        earlier = HEADING + "- src/app.rs:12 — Large method — Extract Function — 2026-01-02\n"
+        for location, smell in (("src/app.rs:12", "Excess arguments"), ("src/lib.rs:12", "Large method")):
+            with self.subTest(location=location, smell=smell):
+                cwd = repo_with_ledger(earlier)
+                run(cwd, location, smell, "Extract Function")
+                self.assertEqual(ledger(cwd), earlier + f"- {location} — {smell} — Extract Function — {TODAY}\n")
 
     def test_wrong_argument_count_prints_usage_and_writes_nothing(self):
         cwd = repo()

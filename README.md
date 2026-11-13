@@ -77,13 +77,14 @@ bash test/lint-skills.test.sh
 `commit-sequencing`'s `bin/stack-check BASE` measures each commit of a stack, counting `.claude/`
 lines apart, and flags oversize and placeholder commits. `design-rubric`'s `bin/health-delta` lists
 functions a diff took past a lizard threshold (the suite needs lizard on `PATH` or installed by
-mise), and its `bin/notice` appends a line to `.claude/noticed.md`; `plan-readiness`'s
-`bin/noticed-scan <plan>` ranks the entries a plan must dispose of. `workflow-design`'s
-`bin/wf-status <run>` reports each agent of a Workflow run and exits 1 when one is over its call
-budget, idle or interrupted. `presentation-narrative`'s `scripts/check_timing.py` checks an
-outline's timing table against the talk's window. `slide-rubric`'s `scripts/audit_slides.py` audits
-a deck, and the `disk-space-reclamation` scripts survey, select and apply a deletion plan.
-`interface-design`'s `bin/interface-check <draft>` checks an interface draft against its template.
+mise), and its `bin/notice` appends a line to `.claude/noticed.md` unless one with the same path
+and smell is already there; `plan-readiness`'s `bin/noticed-scan <plan>` ranks the entries a plan
+must dispose of. `workflow-design`'s `bin/wf-status <run>` reports each agent of a Workflow run and
+exits 1 when one is over its call budget, idle or interrupted. `presentation-narrative`'s
+`scripts/check_timing.py` checks an outline's timing table against the talk's window.
+`slide-rubric`'s `scripts/audit_slides.py` audits a deck, and the `disk-space-reclamation` scripts
+survey, select and apply a deletion plan. `interface-design`'s `bin/interface-check <draft>` checks
+an interface draft against its template.
 
 `test/run-skill-suites.sh` runs every `skills/*/tests` suite, its `test*.py` files by unittest
 discovery and each `*.sh` file as one test, and prints the total. It exits 1 when a suite fails or

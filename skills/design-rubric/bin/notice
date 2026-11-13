@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Appends a dated line to .claude/noticed.md at the git top level.
+"""Appends a dated line to .claude/noticed.md at the git top level, unless the ledger already
+holds an entry with the same path (line ignored) and smell.
 
 Usage: notice <path:line> <smell or invariant> <curing move>
 """
 import datetime
 import os
+import pathlib
 import re
 import subprocess
 import sys
@@ -12,6 +14,17 @@ import sys
 HEADING = "# Noticed and left alone\n\n"
 USAGE = "usage: notice <path:line> <smell or invariant> <curing move>\n"
 LOCATION = re.compile(r"[^\s:]+:\d+")
+SEPARATOR = " — "
+
+
+def path_of(location):
+    return location.rsplit(":", 1)[0]
+
+
+def same_entries(ledger, location, smell):
+    """The ledger's `<path:line> — <smell>` keys whose path and smell match, line ignored."""
+    keys = [line[2:].split(SEPARATOR)[:2] for line in ledger.splitlines() if line.startswith("- ")]
+    return [SEPARATOR.join(key) for key in keys if [path_of(key[0])] + key[1:] == [path_of(location), smell]]
 
 
 def main(argv):
@@ -24,8 +37,12 @@ def main(argv):
         sys.stderr.write("error: not a git repository\n")
         return 2
     path = os.path.join(top.stdout.strip(), ".claude", "noticed.md")
-    os.makedirs(os.path.dirname(path), exist_ok=True)
     new = not os.path.exists(path)
+    same = [] if new else same_entries(pathlib.Path(path).read_text(encoding="utf-8"), location, smell)
+    if same:
+        print(f"already noticed: {same[0]}")
+        return 0
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "a", encoding="utf-8") as f:
         if new:
             f.write(HEADING)
