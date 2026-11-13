@@ -22,8 +22,9 @@ description: Writes and debugs Claude Code skills, subagents, hooks, rules and m
 ## Invocation
 
 - Default to model-invocable. Set `disable-model-invocation: true` only for a side effect outside
-  the worktree, timing the user must control, or a pure router. It takes the description out of
-  context, makes the Skill tool refuse Claude, and bars preloading into agents.
+  the worktree that cannot be a dry run first, timing the user must control, or a pure router. It
+  takes the description out of context, makes the Skill tool refuse Claude, and bars preloading
+  into agents.
 - `user-invocable: false` hides a skill from the `/` menu for knowledge no one would run as a
   command.
 
@@ -36,6 +37,15 @@ description: Writes and debugs Claude Code skills, subagents, hooks, rules and m
   because commands run in the session's working directory.
 - The body loads once and isn't re-read. After compaction only its first 5,000 tokens come back,
   so put what must hold first. A rule that must hold every time belongs in a hook.
+
+## Scripts
+
+- Move a step into a bundled script when its inputs fix its answer.
+- The script emits facts, one row per item with its reason, kept rows included; the model decides.
+- Decision functions are pure: clock, filesystem and git output arrive as arguments.
+- A deleting step is its own subcommand, a dry run by default, re-validating each row on apply.
+- Failed or truncated detection exits non-zero.
+- The body says what the script emits and what the model decides, not the script's checks.
 
 ## Load-time preprocessing
 
