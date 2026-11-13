@@ -1,12 +1,15 @@
 """Runs bin/stale-refs in fixture repos built per test and checks its exact output."""
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 
-SCRIPT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "bin", "stale-refs")
-DATED = dict(os.environ, GIT_AUTHOR_DATE="2026-01-02T00:00:00", GIT_COMMITTER_DATE="2026-01-02T00:00:00",
-             GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+HERE = os.path.dirname(os.path.abspath(__file__))
+SCRIPT = os.path.join(os.path.dirname(HERE), "bin", "stale-refs")
+ENV = {"PATH": os.environ["PATH"], "HOME": os.environ["HOME"], "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+       "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"}
+DATED = dict(ENV, GIT_AUTHOR_DATE="2026-01-02T00:00:00", GIT_COMMITTER_DATE="2026-01-02T00:00:00")
 
 
 class Repo:
@@ -28,7 +31,7 @@ class Repo:
                 f.write(text)
 
     def run(self, *args):
-        return subprocess.run(["python3", SCRIPT, *args], cwd=self.dir, capture_output=True, text=True)
+        return subprocess.run(["python3", SCRIPT, *args], cwd=self.dir, env=ENV, capture_output=True, text=True)
 
 
 class StaleRefs(unittest.TestCase):
@@ -68,7 +71,7 @@ class StaleRefs(unittest.TestCase):
         self.assertEqual((out.stdout, out.returncode), ("", 0))
 
     def test_outside_a_git_repo_is_an_error(self):
-        out = subprocess.run(["python3", SCRIPT], cwd=tempfile.mkdtemp(), capture_output=True, text=True)
+        out = subprocess.run(["python3", SCRIPT], cwd=tempfile.mkdtemp(), env=ENV, capture_output=True, text=True)
         self.assertEqual((out.stdout, out.stderr, out.returncode), ("", "error: not a git repository\n", 2))
 
     def test_unknown_base_is_an_error(self):
@@ -100,6 +103,37 @@ class StaleRefs(unittest.TestCase):
         out = repo.run()
         self.assertEqual((out.stdout, out.stderr, out.returncode),
                          ("fetchUser\tname\tREADME.md:3\t2026-01-02\nunread:\nsecret.py\n", "", 0))
+
+
+def decoy_repo():
+    decoy, worktree = tempfile.mkdtemp(), tempfile.mkdtemp()
+    subprocess.run(["git", "init", "-q", "--bare", decoy], env=ENV, check=True)
+    return decoy, worktree
+
+
+def snapshot(*roots):
+    files = {}
+    for root in roots:
+        for parent, _, names in os.walk(root):
+            for name in names:
+                with open(os.path.join(parent, name), "rb") as f:
+                    files[os.path.join(parent, name)] = f.read()
+    return files
+
+
+def changed(before, after):
+    return sorted(path for path in set(before) | set(after) if before.get(path) != after.get(path))
+
+
+class InheritedGitDir(unittest.TestCase):
+    def test_a_git_dir_in_the_callers_environment_is_left_untouched(self):
+        decoy, worktree = decoy_repo()
+        before = snapshot(decoy, worktree)
+        done = subprocess.run([sys.executable, "-m", "unittest", "test_stale_refs.StaleRefs"], cwd=HERE,
+                              env=dict(os.environ, GIT_DIR=decoy, GIT_WORK_TREE=worktree, PYTHONDONTWRITEBYTECODE="1"),
+                              capture_output=True, text=True)
+        self.assertEqual(changed(before, snapshot(decoy, worktree)), [])
+        self.assertEqual(done.returncode, 0, done.stderr)
 
 
 if __name__ == "__main__":

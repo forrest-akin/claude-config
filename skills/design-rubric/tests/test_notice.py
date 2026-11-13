@@ -2,22 +2,25 @@
 import datetime
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 
-SCRIPT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "bin", "notice")
+HERE = os.path.dirname(os.path.abspath(__file__))
+SCRIPT = os.path.join(os.path.dirname(HERE), "bin", "notice")
 TODAY = datetime.date.today().isoformat()
 HEADING = "# Noticed and left alone\n\n"
+ENV = {"PATH": os.environ["PATH"], "HOME": os.environ["HOME"]}
 
 
 def repo():
     path = tempfile.mkdtemp()
-    subprocess.run(["git", "init", "-q", path], check=True)
+    subprocess.run(["git", "init", "-q", path], env=ENV, check=True)
     return path
 
 
 def run(cwd, *args):
-    return subprocess.run(["python3", SCRIPT, *args], cwd=cwd, capture_output=True, text=True)
+    return subprocess.run(["python3", SCRIPT, *args], cwd=cwd, env=ENV, capture_output=True, text=True)
 
 
 def ledger(cwd):
@@ -64,6 +67,37 @@ class Notice(unittest.TestCase):
         cwd = tempfile.mkdtemp()
         out = run(cwd, "a.rs:1", "Large method", "Extract Function")
         self.assertEqual((out.stdout, out.stderr, out.returncode), ("", "error: not a git repository\n", 2))
+
+
+def decoy_repo():
+    decoy, worktree = tempfile.mkdtemp(), tempfile.mkdtemp()
+    subprocess.run(["git", "init", "-q", "--bare", decoy], env=ENV, check=True)
+    return decoy, worktree
+
+
+def snapshot(*roots):
+    files = {}
+    for root in roots:
+        for parent, _, names in os.walk(root):
+            for name in names:
+                with open(os.path.join(parent, name), "rb") as f:
+                    files[os.path.join(parent, name)] = f.read()
+    return files
+
+
+def changed(before, after):
+    return sorted(path for path in set(before) | set(after) if before.get(path) != after.get(path))
+
+
+class InheritedGitDir(unittest.TestCase):
+    def test_a_git_dir_in_the_callers_environment_is_left_untouched(self):
+        decoy, worktree = decoy_repo()
+        before = snapshot(decoy, worktree)
+        done = subprocess.run([sys.executable, "-m", "unittest", "test_notice.Notice"], cwd=HERE,
+                              env=dict(os.environ, GIT_DIR=decoy, GIT_WORK_TREE=worktree, PYTHONDONTWRITEBYTECODE="1"),
+                              capture_output=True, text=True)
+        self.assertEqual(changed(before, snapshot(decoy, worktree)), [])
+        self.assertEqual(done.returncode, 0, done.stderr)
 
 
 if __name__ == "__main__":

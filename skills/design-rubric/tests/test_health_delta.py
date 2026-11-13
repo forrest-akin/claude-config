@@ -2,13 +2,15 @@
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SCRIPT = os.path.join(os.path.dirname(HERE), "bin", "health-delta")
 FIXTURES = os.path.join(HERE, "fixtures")
-ENV = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+ENV = {"PATH": os.environ["PATH"], "HOME": os.environ["HOME"], "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+       "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"}
 
 
 class Repo:
@@ -125,7 +127,7 @@ class HealthDelta(unittest.TestCase):
                          ("", "warning: lizard not found; health-delta skipped\n", 0))
 
     def test_outside_a_git_repository_is_an_error(self):
-        out = subprocess.run(["python3", SCRIPT], cwd=tempfile.mkdtemp(), capture_output=True, text=True)
+        out = subprocess.run(["python3", SCRIPT], cwd=tempfile.mkdtemp(), env=ENV, capture_output=True, text=True)
         self.assertEqual((out.stdout, out.stderr, out.returncode), ("", "error: not a git repository\n", 2))
 
     def test_unknown_base_is_an_error(self):
@@ -141,6 +143,37 @@ class HealthDelta(unittest.TestCase):
             f.write(b"\xff\xfe fn x() {}\n")
         out = repo.run()
         self.assertEqual((out.stdout, out.returncode), ("unread:\nlib.rs\n", 0), out.stderr)
+
+
+def decoy_repo():
+    decoy, worktree = tempfile.mkdtemp(), tempfile.mkdtemp()
+    subprocess.run(["git", "init", "-q", "--bare", decoy], env=ENV, check=True)
+    return decoy, worktree
+
+
+def snapshot(*roots):
+    files = {}
+    for root in roots:
+        for parent, _, names in os.walk(root):
+            for name in names:
+                with open(os.path.join(parent, name), "rb") as f:
+                    files[os.path.join(parent, name)] = f.read()
+    return files
+
+
+def changed(before, after):
+    return sorted(path for path in set(before) | set(after) if before.get(path) != after.get(path))
+
+
+class InheritedGitDir(unittest.TestCase):
+    def test_a_git_dir_in_the_callers_environment_is_left_untouched(self):
+        decoy, worktree = decoy_repo()
+        before = snapshot(decoy, worktree)
+        done = subprocess.run([sys.executable, "-m", "unittest", "test_health_delta.HealthDelta"], cwd=HERE,
+                              env=dict(os.environ, GIT_DIR=decoy, GIT_WORK_TREE=worktree, PYTHONDONTWRITEBYTECODE="1"),
+                              capture_output=True, text=True)
+        self.assertEqual(changed(before, snapshot(decoy, worktree)), [])
+        self.assertEqual(done.returncode, 0, done.stderr)
 
 
 if __name__ == "__main__":
