@@ -18,6 +18,8 @@ Tiers, smallest to largest: `haiku`, `sonnet`, `opus`, `fable`.
 | Unsure | `opus` at `high`; say why |
 
 - Never omit `model` or `effort`: an omitted `model` can fall through to the dispatcher's.
+- Turns set cost and death risk, not token price: a model that needs more turns for multi-step
+  work is the dearer one.
 - A dispatcher is tiered by its own work, not its children's.
 - Never mix models or effort inside a panel whose verdicts are compared.
 
@@ -53,8 +55,8 @@ check `/tasks` for what actually ran.
 
 - Steer depth with `effort`, not wording: asking `haiku` or `sonnet` to think less doesn't reduce
   thinking.
-- Tell a low-effort `haiku` in a long prompt to keep going until everything is done and to run a
-  real check before reporting; it otherwise stops early or reports unchecked work.
+- Tell `sonnet` at `low` or `medium` on multi-step work to keep going until everything is done
+  and to run a real check before reporting; it otherwise stops early or reports unchecked work.
 - Give a searching `haiku` today's date.
 - State a completion condition for `fable`, which can end on a "Next, I'll..." note that becomes
   the result. Give it the outcome, not steps; ask for targeted edits, and for bugs it finds
