@@ -98,26 +98,28 @@ the trigger:
 
 1. Cut: it already lives somewhere; cite where.
 2. Edit an existing home.
-3. A one-to-two-line why/never comment at the single anchor. "What" is cut.
-4. A path-scoped rule (`.claude/rules/<topic>.md` with `paths:`) for a glob or a file that
+3. An invariant the code must hold, a property across entry points or inputs: a test under
+   `tests/invariants/` whose docstring states it in one sentence.
+4. A one-to-two-line why/never comment at the single anchor. "What" is cut.
+5. A path-scoped rule (`.claude/rules/<topic>.md` with `paths:`) for a glob or a file that
    can't hold a comment.
-5. Propose a repo skill for a procedure Claude runs.
-6. `docs/` for procedures humans run and rare reference; point-in-time records in a dated doc.
-7. A root CLAUDE.md line only when needed every session and a miss costs more than the line
+6. Propose a repo skill for a procedure Claude runs.
+7. `docs/` for procedures humans run and rare reference; point-in-time records in a dated doc.
+8. A root CLAUDE.md line only when needed every session and a miss costs more than the line
    does every session: irreversible, or repeatedly corrected.
-8. User-level files only as a proposal to the user.
-9. A todo for open items, secrets (location and kind, never the value) and only copies.
+9. User-level files only as a proposal to the user.
+10. A todo for open items, secrets (location and kind, never the value) and only copies.
 
 - One home per lesson, except that an irreversible never-do also gets a comment where the act
   happens. A critical value lives once, at the earliest-loading layer; other places point to it.
 - Point-in-time lessons never enter living homes. A stale lesson is cut, and every living home
   repeating it fixed.
 - Dedupe before writing: search the anchor's neighbourhood, CLAUDE.md files and their imports,
-  rules, skills, agents, docs, user files, and auto memory. A hit counts only if the lesson's
-  audience can see it; untracked and user files reach only the user. If a loaded home already
-  said it and the session missed it anyway, raise its prominence or widen its trigger; never cut
-  it as a restatement. Same text with a qualifier: cut the new one. Missing qualifier: add it.
-  Contradiction: verify against the code and fix every copy.
+  rules, skills, agents, docs, user files, auto memory, and `tests/invariants/`. A hit counts only
+  if the lesson's audience can see it; untracked and user files reach only the user. If a loaded
+  home already said it and the session missed it anyway, raise its prominence or widen its
+  trigger; never cut it as a restatement. Same text with a qualifier: cut the new one. Missing
+  qualifier: add it. Contradiction: verify against the code and fix every copy.
 - Fix the other files the lesson made wrong with `doc-drift`.
 - Leave to the user: new skills, docs or sections; files others wrote; anything narrowing a
   global rule; unresolved contradictions; targets outside the repo or ignored by git.
